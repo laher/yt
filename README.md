@@ -4,10 +4,13 @@
 
 `yt` can work with multi-document YAML files.
 
+`yt` is VERY experimental - please use with care.
+
 ## Background
 
-I wrote this tool to work with multi-document YAML files (see kubernetes/kubectl). 
-It's a really useful feature, but unfortunately various YAML tools do not inherently support multi-document YAML files ([go-yaml](https://github.com/go-yaml/yaml) just picks the first one)
+I wrote this tool in order to work with multi-document YAML files (see kubernetes/kubectl). 
+
+YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document YAML files ([go-yaml](https://github.com/go-yaml/yaml) just picks the first document and ignores the rest). 
 
 `yt` offers 2 ways to select a document, and then it offers a simple query mechanism so that you can print out parts of your document.
 
@@ -21,19 +24,47 @@ I'll cut a release once I'm happy
 
 ## Run
 
-The default behaviour parses the input as YAML and spits it out in the same format
+The default behaviour parses the input as YAML and spits it out in the same format.
+
+Try running `yt` against the `sample.yaml` file provided in this repository (it's an anonymised kubernetes file, containing 3 yaml documents)
 
 ```
     yt < sample.yaml 
 ```
 
-This is effectively the same as setting the main query to '{{.|yaml}}'
+This is effectively the same as setting the main query to `'{{.|yaml}}'`
 
 ```
     yt -q '{{.|yaml}}' < sample.yaml 
 ```
 
-## Selecting a root doc from a stream
+### Queries by example
+
+Please see golang.org/pkg/text/template for more details. These are just a few examples
+
+#### Nested items
+```
+   yt -q '{{.metadata.labels.app}} < sample.yaml'
+```
+
+#### Functions
+
+Please see golang.org/pkg/text/template for a comprehensive list of built-in functions. These are just a few examples
+
+##### js escapes javascript
+
+```
+  yt -q '{{index .data "config.json"|js}}'
+```
+
+##### index is useful when one of your keys itself contains a dot
+
+```
+   yt -q '{{index .data "config.json"}}'
+```
+
+
+## Selecting a root doc from a multi-document input
 
 You can select a 'document index' or a 'document query'.
 
