@@ -8,19 +8,23 @@
 
 ## Background
 
-I wrote this tool in order to work with multi-document YAML files (see kubernetes/kubectl). 
+I wrote this tool in order to work with multi-document YAML files (kubernetes/kubectl configuration files). 
 
-YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document YAML files ([go-yaml](https://github.com/go-yaml/yaml) just picks the first document and ignores the rest). 
+YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document files. ([go-yaml](https://github.com/go-yaml/yaml) itself just picks the first document and ignores the rest. I have also had other problems with tools I've tried, particularly with nested json inside yaml (I know, I know).
 
-`yt` offers 2 ways to select a document, and then it offers a simple query mechanism so that you can print out parts of your document.
+## Features
 
-`yt` uses Go's internal templating engine to achieve this. It's never going to be as terse as `jq`, but it's fine for basic stuff.
+`yt` offers:
+
+ * 2 ways to select a document within a multiple-document file/stream.
+ * a simple query mechanism so that you can print out parts of your document.
+ * `yt` uses Go's text/template as its querying engine. It's never going to be as terse or as flexible as `jq`, but it's fine forthe basics, and I (or you) can keep on adding template functions.
 
 ## Installation
 
-    go get github.com/laher/yt
+I'll create a release once I'm happy. Until then, you'll need to [install go](https://golang.org/doc/install) in order to install yt.
 
-I'll cut a release once I'm happy
+    go get github.com/laher/yt
 
 ## Run
 
@@ -43,26 +47,45 @@ This is effectively the same as setting the main query to `'{{.|yaml}}'`
 Please see golang.org/pkg/text/template for more details. These are just a few examples
 
 #### Nested items
+
+(outputted in Go's 'sprintf' format)
+
 ```
-   yt -q '{{.metadata.labels.app}} < sample.yaml'
+   yt -q '{{.metadata.labels.app}}' < sample.yaml
 ```
 
-#### Functions
+#### Selected functions
 
 Please see golang.org/pkg/text/template for a comprehensive list of built-in functions. These are just a few examples
-
-##### js escapes javascript
-
-```
-  yt -q '{{index .data "config.json"|js}}'
-```
 
 ##### index is useful when one of your keys itself contains a dot
 
 ```
-   yt -q '{{index .data "config.json"}}'
+   yt -q '{{index .data "config.json"}}' < sample.yaml
 ```
 
+##### `js` escapes javascript
+
+(pipes are similar to jq's piping syntax)
+
+```
+  yt -q '{{index .data "config.json"|js}}' < sample.yaml
+```
+
+
+##### `go` generates a Go-syntax representation of the result
+
+```
+  yt -q '{{.metadata|go}}' < sample.yaml
+```
+
+##### or
+
+```
+  yt -q '{{or .metadata.labels.app .spec.replicas}}' < sample.yaml
+```
+
+There's lots of other built-in stuff, check go's docs.
 
 ## Selecting a root doc from a multi-document input
 
@@ -70,7 +93,7 @@ You can select a 'document index' or a 'document query'.
 
 ### Document index
 
-Instead of selecting the first document (index 0), `yt` finds the second document (index 1).
+Instead of selecting the first document (index 0), `yt` can use the second document (index 1).
 
 ```
     yt -di=1 < sample.yaml 
@@ -78,7 +101,7 @@ Instead of selecting the first document (index 0), `yt` finds the second documen
 
 ### Matching documents
 
-Instead of selecting the first document, `yt` queries documents until it finds a document matching the 'document query'.
+Instead of selecting the first document, `yt` can query documents to find a document matching the 'document query'.
 
 ```
     yt -dq='{{eq .kind "ConfigMap"}}' < sample.yaml 
