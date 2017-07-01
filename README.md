@@ -93,4 +93,6 @@ yt's query syntax comes from the [text/template package](https://golang.org/pkg/
 
 All of the hard stuff was done in go-yaml and in go itself. Thanks all. 
 
-yt's name is deliberately similar to yq and jq. The y is for yaml and the t is for template. The name is also a vague nod to `kt` by Felix Geller, whose seat I stole.
+yt's name is deliberately similar to yq and jq. The y is for yaml and the t is for template. 
+
+The name is also a vague nod to [kt](https://github.com/fgeller/kt), which was written by a man who gave me his chair.
