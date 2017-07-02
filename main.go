@@ -21,6 +21,7 @@ var (
 	index                = flag.Int("di", 0, "Select doc by order of appearance in the input")
 	maxBufferSizeDefault = bufio.MaxScanTokenSize
 	maxBufferSize        = flag.Int("b", maxBufferSizeDefault, "Max buffer size")
+	errNoMatch           = fmt.Errorf("no match")
 )
 
 func toYAML(x interface{}) (string, error) {
@@ -45,21 +46,20 @@ func main() {
 	input = os.Stdin
 
 	if *index > 0 || *documentSplitQuery != "" {
-
-		input, err = split(input)
+		input, err = split(input, *documentSplitQuery, *index, *maxBufferSize)
 		if err != nil {
 			log.Fatal(err)
 		}
 	} // else just process the first doc
 
-	err = spout(input, os.Stdout)
+	err = spout(input, os.Stdout, *query, *maxBufferSize)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func spout(input io.ReadCloser, output io.Writer) error {
-	y, err := ioutil.ReadAll(input)
+func spout(input io.ReadCloser, output io.Writer, query string, maxBufferSize int) error {
+	y, err := ioutil.ReadAll(io.LimitReader(input, int64(maxBufferSize)))
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func spout(input io.ReadCloser, output io.Writer) error {
 		"go":        toGo,
 		"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
 	}
-	tmpl, err := template.New("test").Funcs(funcMap).Parse(*query)
+	tmpl, err := template.New("test").Funcs(funcMap).Parse(query)
 	if err != nil {
 		return err
 	}
@@ -90,10 +90,10 @@ func spout(input io.ReadCloser, output io.Writer) error {
 	return nil
 }
 
-func split(input io.ReadCloser) (io.ReadCloser, error) {
+func split(input io.ReadCloser, documentSplitQuery string, docIndex int, maxBufferSize int) (io.ReadCloser, error) {
 	defer input.Close()
 	s := bufio.NewScanner(input)
-	s.Buffer(make([]byte, *maxBufferSize), *maxBufferSize)
+	s.Buffer(make([]byte, maxBufferSize), maxBufferSize)
 	onNewDoc := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		buf := ""
 		for i := 0; i < len(data); i++ {
@@ -121,7 +121,7 @@ func split(input io.ReadCloser) (io.ReadCloser, error) {
 			//log.Printf("skip")
 			continue
 		}
-		if *documentSplitQuery != "" {
+		if documentSplitQuery != "" {
 			//log.Printf("scanned: %s", string(y))
 			data := make(map[interface{}]interface{})
 			err := yaml.Unmarshal(y, &data)
@@ -133,7 +133,7 @@ func split(input io.ReadCloser) (io.ReadCloser, error) {
 				"o":         other,
 				"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
 			}
-			tmpl, err := template.New("test").Funcs(funcMap).Parse(*documentSplitQuery)
+			tmpl, err := template.New("test").Funcs(funcMap).Parse(documentSplitQuery)
 			if err != nil {
 				return nil, fmt.Errorf("parsing: %s", err)
 			}
@@ -153,12 +153,12 @@ func split(input io.ReadCloser) (io.ReadCloser, error) {
 				return ioutil.NopCloser(bytes.NewBuffer(y)), nil
 			}
 		} else {
-			if i == *index {
+			if i == docIndex {
 				//fmt.Printf("---%s", string(y))
 				return ioutil.NopCloser(bytes.NewBuffer(y)), nil
 			}
 		}
 		i++
 	}
-	return nil, fmt.Errorf("no match")
+	return nil, errNoMatch
 }
