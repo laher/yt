@@ -111,6 +111,11 @@ Instead of selecting the first document, `yt` can query documents to find a docu
 
 yt's query syntax comes from the [text/template package](https://golang.org/pkg/text/template) from [Go](https://golang.org)'s standard library.
 
+## Large files and streams
+
+`yt` is not very efficient with large files. Don't use it for streams, it's not ready for that yet. Perhaps I'll convert it to use more stream-oriented parsing in the future.
+
+In the meantime, use `-maxBufferSize=1000000` to manage large files. The default should work fine with smmallish files.
 
 ## Acknowledgements
 
