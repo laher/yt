@@ -29,7 +29,7 @@ func TestSpout(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			i := ioutil.NopCloser(strings.NewReader(test.input))
 			o := bytes.NewBuffer([]byte{})
-			err := spout(i, o, test.query, maxBufferSizeDefault)
+			err := spout(i, o, map[string]string{}, test.query, maxBufferSizeDefault)
 			if err != nil {
 				t.Errorf("Unexpected error")
 				return

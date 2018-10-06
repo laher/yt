@@ -3,12 +3,14 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -29,6 +31,32 @@ func toYAML(x interface{}) (string, error) {
 	return string(bts), err
 }
 
+func coerceKeys(in map[interface{}]interface{}) map[string]interface{} {
+
+	tryMap := map[string]interface{}{}
+	for k, v := range in {
+		ks := fmt.Sprintf("%v", k)
+		switch vT := v.(type) {
+		case map[interface{}]interface{}:
+			tryMap[ks] = coerceKeys(vT)
+		default:
+			tryMap[ks] = v
+		}
+	}
+	return tryMap
+}
+
+func toJSON(x interface{}) (string, error) {
+	switch xT := x.(type) {
+	case map[interface{}]interface{}:
+		tryMap := coerceKeys(xT)
+		bts, err := json.Marshal(tryMap)
+		return string(bts), err
+	}
+	bts, err := json.Marshal(x)
+	return string(bts), err
+}
+
 func other(x interface{}) string {
 	return fmt.Sprintf("%+v", x)
 }
@@ -37,11 +65,42 @@ func toGo(x interface{}) string {
 	return fmt.Sprintf("%#v", x)
 }
 
+func del(x interface{}, y string) interface{} {
+	switch t := x.(type) {
+	case map[interface{}]interface{}:
+		delete(t, y)
+	default:
+		panic(fmt.Sprintf("x (%t) is not a map[interface{}]interface{}", x))
+	}
+	return x
+}
+
+func set(x map[interface{}]interface{}, k string, y interface{}) string {
+	x[k] = y
+	return "" // empty-string avoids output
+}
+
+type strslice []string
+
+func (i *strslice) String() string {
+	return fmt.Sprintf("%v", *i)
+}
+
+func (i *strslice) Set(value string) error {
+	*i = append(*i, value)
+	return nil
+}
+
+var myStrs strslice
+
 func main() {
+
+	flag.Var(&myStrs, "d", "Data source(s)")
 	flag.Parse()
 	var (
 		err   error
 		input io.ReadCloser
+		data  = map[string]string{}
 	)
 	input = os.Stdin
 
@@ -51,31 +110,72 @@ func main() {
 			log.Fatal(err)
 		}
 	} // else just process the first doc
+	for i, dataArg := range myStrs {
+		parts := strings.Split(dataArg, "=")
+		key := ""
+		val := ""
+		if len(parts) == 2 {
+			key = parts[0]
+			val = parts[1]
+		} else if len(parts) == 1 {
+			key = strconv.Itoa(i)
+			val = parts[0]
+		} else {
+			log.Fatal("data should take the format key=filename.yaml")
+		}
 
-	err = spout(input, os.Stdout, *query, *maxBufferSize)
+		data[key] = val
+	}
+
+	err = spout(input, os.Stdout, data, *query, *maxBufferSize)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func spout(input io.ReadCloser, output io.Writer, query string, maxBufferSize int) error {
+func unmarshalInput(input io.ReadCloser, maxBufferSize int) (map[interface{}]interface{}, error) {
 	y, err := ioutil.ReadAll(io.LimitReader(input, int64(maxBufferSize)))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer input.Close()
 
 	data := make(map[interface{}]interface{})
 	err = yaml.Unmarshal(y, &data)
 	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func spout(input io.ReadCloser, output io.Writer, dataSources map[string]string, query string, maxBufferSize int) error {
+
+	data, err := unmarshalInput(input, maxBufferSize)
+	if err != nil {
 		return err
 	}
 
 	funcMap := template.FuncMap{
 		"yaml":      toYAML,
+		"json":      toJSON,
 		"o":         other,
 		"go":        toGo,
+		"del":       del,
+		"set":       set,
 		"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
+		"ds": func(k string) interface{} {
+			ds := dataSources[k]
+			rdr, err := os.Open(ds)
+			if err != nil {
+				log.Fatal(err)
+			}
+			ret, err := unmarshalInput(rdr, maxBufferSize)
+			if err != nil {
+				log.Fatal(err)
+			}
+			return ret
+		},
 	}
 	tmpl, err := template.New("test").Funcs(funcMap).Parse(query)
 	if err != nil {
