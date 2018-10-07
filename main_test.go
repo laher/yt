@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"io"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -32,18 +31,14 @@ func TestSpout(t *testing.T) {
 			o := bytes.NewBuffer([]byte{})
 			templates := map[string]source{
 				mainSource: source{
-					typ: stdin,
-					Reader: func() io.ReadCloser {
-						return ioutil.NopCloser(strings.NewReader(test.query))
-					},
+					typ: str,
+					str: test.query,
 				},
 			}
 			data := map[string]source{
 				mainSource: source{
-					typ: stdin,
-					Reader: func() io.ReadCloser {
-						return ioutil.NopCloser(strings.NewReader(test.input))
-					},
+					typ: str,
+					str: test.input,
 				},
 			}
 			err := spout(o, data, templates, maxBufferSizeDefault)

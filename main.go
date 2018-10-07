@@ -4,11 +4,8 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/spf13/afero"
 )
@@ -78,10 +75,7 @@ Usage:
 	}
 	if _, ok := data[mainSource]; !ok {
 		data[mainSource] = source{
-			typ: str,
-			Reader: func() io.ReadCloser {
-				return os.Stdin
-			},
+			typ: stdin,
 		}
 	}
 	tpls, err := getSources(templates)
@@ -91,9 +85,7 @@ Usage:
 	if _, ok := tpls[mainSource]; !ok {
 		tpls[mainSource] = source{
 			typ: str,
-			Reader: func() io.ReadCloser {
-				return ioutil.NopCloser(strings.NewReader(*query))
-			},
+			str: *query,
 		}
 	}
 

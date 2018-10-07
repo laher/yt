@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -9,8 +10,15 @@ import (
 )
 
 func spout(output io.Writer, dataSources map[string]source, templateSources map[string]source, maxBufferSize int) error {
-
-	data, err := unmarshalInput(dataSources[mainSource].Reader(), maxBufferSize)
+	mainDS, ok := dataSources[mainSource]
+	if !ok {
+		return fmt.Errorf("Main data source undefined")
+	}
+	rdr, err := mainDS.GetReader()
+	if err != nil {
+		return err
+	}
+	data, err := unmarshalInput(rdr, maxBufferSize)
 	if err != nil {
 		return err
 	}
@@ -36,7 +44,11 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 			return ret
 		},
 	}
-	b, err := ioutil.ReadAll(templateSources[mainSource].Reader())
+	trdr, err := templateSources[mainSource].GetReader()
+	if err != nil {
+		return err
+	}
+	b, err := ioutil.ReadAll(trdr)
 	if err != nil {
 		return err
 	}
@@ -47,7 +59,11 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 	for k, s := range templateSources {
 		switch s.typ {
 		case str, stdin:
-			b, err := ioutil.ReadAll(templateSources[mainSource].Reader())
+			rdr, err := s.GetReader()
+			if err != nil {
+				return err
+			}
+			b, err := ioutil.ReadAll(rdr)
 			if err != nil {
 				return err
 			}

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/spf13/afero"
@@ -115,9 +116,21 @@ const (
 )
 
 type source struct {
-	typ    string
-	path   string
-	Reader func() io.ReadCloser
+	typ  string
+	path string
+	str  string
+}
+
+func (s source) GetReader() (io.ReadCloser, error) {
+	switch s.typ {
+	case str:
+		return ioutil.NopCloser(strings.NewReader(s.str)), nil
+	case stdin:
+		return os.Stdin, nil
+	case file:
+		return fs.Open(s.path)
+	}
+	return nil, fmt.Errorf("Unhandled source type")
 }
 
 func getSources(args []string) (map[string]source, error) {
