@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	mainSource = "main"
+	mainSource = "."
 )
 
 func unmarshalInput(input io.ReadCloser, maxBufferSize int) (map[interface{}]interface{}, error) {
