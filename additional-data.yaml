@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+data:
+  my-config: text
+  my-other-config: more-text
+kind: ConfigMap
+metadata:
+  name: myservice
+  namespace: myns
+  labels:
+    app: myns

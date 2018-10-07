@@ -6,11 +6,21 @@
 
 `yt` is VERY experimental - please use with care.
 
+
+## Primary Goals
+
+ * Query yaml documents
+ * Manipulate yaml documents
+ * Merge yamls
+ * Support multi-document files
+
 ## Background
 
-I wrote this tool in order to work with multi-document YAML files (kubernetes/kubectl configuration files). 
+I originally wrote this tool in order to work with multi-document YAML files (kubernetes/kubectl configuration files). The files were repetitive, and I needed to do a little search-and-replace.
 
-YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document files. ([go-yaml](https://github.com/go-yaml/yaml) itself just picks the first document and ignores the rest. I have also had other problems with tools I've tried, particularly with nested json inside yaml (I know, I know).
+Some time later I found myself working with bigger, more repetitive yaml files (Concourse CI pipelines).
+
+Multi-document note: YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document files. ([go-yaml](https://github.com/go-yaml/yaml) itself just picks the first document and ignores the rest. I have also had other problems with tools I've tried, particularly with nested json inside yaml (I know, I know).
 
 ## Features
 
@@ -18,7 +28,7 @@ YAML's multi-document syntax is a really useful feature, but unfortunately some 
 
  * 2 ways to select a document within a multiple-document file/stream.
  * a simple query mechanism so that you can print out parts of your document.
- * `yt` uses Go's text/template as its querying engine. It's never going to be as terse or as flexible as `jq`, but it's fine forthe basics, and I (or you) can keep on adding template functions.
+ * `yt` uses Go's text/template as its querying engine. It's never going to be as terse or as flexible as `jq`, but it's fine for the basics, and I (or you) can keep on adding template functions.
 
 ## Installation
 
@@ -105,6 +115,14 @@ Instead of selecting the first document, `yt` can query documents to find a docu
 
 ```
     yt -dq='{{eq .kind "ConfigMap"}}' < sample.yaml 
+```
+
+### Additional data sources:
+
+Write some data from another doc into this doc
+
+```
+yt -q '{{set . "data" (ds "x").data}}{{.|yaml}}' -d x=additional-data.yaml < sample.yaml
 ```
 
 ## Query syntax
