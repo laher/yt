@@ -1,15 +1,16 @@
 package main
 
 import (
-	"html/template"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"text/template"
 )
 
-func spout(input io.ReadCloser, output io.Writer, dataSources map[string]string, query string, maxBufferSize int) error {
+func spout(output io.Writer, dataSources map[string]source, templateSources map[string]source, maxBufferSize int) error {
 
-	data, err := unmarshalInput(input, maxBufferSize)
+	data, err := unmarshalInput(dataSources[mainSource].Reader(), maxBufferSize)
 	if err != nil {
 		return err
 	}
@@ -24,7 +25,7 @@ func spout(input io.ReadCloser, output io.Writer, dataSources map[string]string,
 		"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
 		"ds": func(k string) interface{} {
 			ds := dataSources[k]
-			rdr, err := os.Open(ds)
+			rdr, err := os.Open(ds.path)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -35,9 +36,31 @@ func spout(input io.ReadCloser, output io.Writer, dataSources map[string]string,
 			return ret
 		},
 	}
-	tmpl, err := template.New("test").Funcs(funcMap).Parse(query)
+	b, err := ioutil.ReadAll(templateSources[mainSource].Reader())
 	if err != nil {
 		return err
+	}
+	tmpl, err := template.New("main").Funcs(funcMap).Parse(string(b))
+	if err != nil {
+		return err
+	}
+	for k, s := range templateSources {
+		switch s.typ {
+		case str, stdin:
+			b, err := ioutil.ReadAll(templateSources[mainSource].Reader())
+			if err != nil {
+				return err
+			}
+			_, err = tmpl.New(k).Parse(string(b))
+			if err != nil {
+				return err
+			}
+		case file:
+			if _, err := tmpl.New(k).ParseFiles(s.path); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Run the template to verify the output.

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -27,9 +28,25 @@ func TestSpout(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			i := ioutil.NopCloser(strings.NewReader(test.input))
+			//i := ioutil.NopCloser(strings.NewReader(test.input))
 			o := bytes.NewBuffer([]byte{})
-			err := spout(i, o, map[string]string{}, test.query, maxBufferSizeDefault)
+			templates := map[string]source{
+				mainSource: source{
+					typ: stdin,
+					Reader: func() io.ReadCloser {
+						return ioutil.NopCloser(strings.NewReader(test.query))
+					},
+				},
+			}
+			data := map[string]source{
+				mainSource: source{
+					typ: stdin,
+					Reader: func() io.ReadCloser {
+						return ioutil.NopCloser(strings.NewReader(test.input))
+					},
+				},
+			}
+			err := spout(o, data, templates, maxBufferSizeDefault)
 			if err != nil {
 				t.Errorf("Unexpected error")
 				return
@@ -46,37 +63,29 @@ func TestSplit(t *testing.T) {
 	tests := []struct {
 		name        string
 		input       string
-		docQuery    string
 		docIndex    int
 		expected    string
 		expectedErr error
 	}{
-		{name: "simple", input: `number: 1`, docQuery: `{{eq .number 1}}`, docIndex: 0, expected: `number: 1`},
-		{name: "non-matching docQuery", input: `number: 1`, docQuery: `{{eq .number 2}}`, docIndex: 0, expectedErr: errNoMatch},
-		{name: "non-matching docIndex", input: `number: 1`, docQuery: ``, docIndex: 1, expectedErr: errNoMatch},
+		{name: "simple", input: `number: 1`, docIndex: 0, expected: `number: 1`},
+		{name: "non-matching docIndex", input: `number: 1`, docIndex: 1, expectedErr: errNoMatch},
 		{name: "index second doc", input: `---
 number: 1
 ---
-number: 2`, docQuery: ``, docIndex: 1, expected: `number: 2`},
-		{name: "query for second doc", input: `---
-number: 1
----
-number: 2
-letter: a`, docQuery: `{{eq .number 2}}`, docIndex: 0, expected: `number: 2
-letter: a`},
+number: 2`, docIndex: 1, expected: `number: 2`},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			i := ioutil.NopCloser(strings.NewReader(test.input))
-			o, err := split(i, test.docQuery, test.docIndex, maxBufferSizeDefault)
+			o, err := split(i, test.docIndex, maxBufferSizeDefault)
 			if test.expectedErr == nil {
 				if err != nil {
-					t.Errorf("Unexpected error")
+					t.Errorf("Unexpected error: %v", err)
 					return
 				}
 				b, err := ioutil.ReadAll(o)
 				if err != nil {
-					t.Errorf("Unexpected error")
+					t.Errorf("Unexpected error: %v", err)
 				}
 				actual := strings.TrimSpace(string(b))
 				if test.expected != actual {
