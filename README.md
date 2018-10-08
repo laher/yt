@@ -6,29 +6,20 @@
 
 `yt` is VERY experimental - please use with care.
 
-
 ## Primary Goals
 
  * Query yaml documents
  * Manipulate yaml documents
  * Merge yamls
  * Support multi-document files
-
-## Background
-
-I originally wrote this tool in order to work with multi-document YAML files (kubernetes/kubectl configuration files). The files were repetitive, and I needed to do a little search-and-replace.
-
-Some time later I found myself working with bigger, more repetitive yaml files (Concourse CI pipelines).
-
-Multi-document note: YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document files. ([go-yaml](https://github.com/go-yaml/yaml) itself just picks the first document and ignores the rest. I have also had other problems with tools I've tried, particularly with nested json inside yaml (I know, I know).
-
 ## Features
 
 `yt` offers:
 
- * 2 ways to select a document within a multiple-document file/stream.
- * a simple query mechanism so that you can print out parts of your document.
- * `yt` uses Go's text/template as its querying engine. It's never going to be as terse or as flexible as `jq`, but it's fine for the basics, and I (or you) can keep on adding template functions.
+ * a query mechanism so that you can print out parts of your document.
+ * an approach to merging and combining multiple yaml documents
+
+`yt` uses Go's text/template as its querying engine. It's never going to be as terse or as flexible as `jq`, but it's fine for the basics, and I (or you) can keep on adding template functions.
 
 ## Installation
 
@@ -99,23 +90,9 @@ There's lots of other built-in stuff, check go's docs.
 
 ## Selecting a root doc from a multi-document input
 
-You can select a 'document index' or a 'document query'.
+You can select a different root document during datasource selection.
 
-### Document index
-
-Instead of selecting the first document (index 0), `yt` can use the second document (index 1).
-
-```
-    yt -di=1 < sample.yaml 
-```
-
-### Matching documents
-
-Instead of selecting the first document, `yt` can query documents to find a document matching the 'document query'.
-
-```
-    yt -dq='{{eq .kind "ConfigMap"}}' < sample.yaml 
-```
+e.g. for the second document (index 1): `yt -q '{{ (ds "." 1).kind }}' < sample.yaml`
 
 ### Additional data sources:
 
@@ -135,10 +112,18 @@ yt's query syntax comes from the [text/template package](https://golang.org/pkg/
 
 In the meantime, use `-maxBufferSize=1000000` to manage large files. The default should work fine with smmallish files.
 
+## Background
+
+I originally wrote this tool in order to _query_ multi-document YAML files (kubernetes/kubectl configuration files). 
+
+Some time later I found myself working with bigger, more repetitive yaml files (Concourse CI pipelines), and wanting to 'template' repetitive parts of the document.
+
+Multi-document note: YAML's multi-document syntax is a really useful feature, but unfortunately some YAML tools do not inherently support multi-document files. ([go-yaml](https://github.com/go-yaml/yaml) itself just picks the first document and ignores the rest. I have also had other problems with tools I've tried, particularly with nested json inside yaml (I know, I know).
+
 ## Acknowledgements
 
-All of the hard stuff was done in go-yaml and in go itself. Thanks all. 
+All of the hard stuff was done in [go-yaml](https://github.com/go-yaml/yaml) and in go itself. Thanks all. 
 
-yt's name is deliberately similar to yq and jq. The y is for yaml and the t is for template. 
+yt's name is deliberately similar to yq and jq. The y is for yaml and the t might be for 'template', maybe for 'tool', or most likely for 'tarantosaurus'.
 
-The name is also a vague nod to [kt](https://github.com/fgeller/kt), which was written by a man who gave me his chair.
+Thanks to [gomplate](https://github.com/hairyhenderson/gomplate) for a wonderful example of a cli tool harnessing go's text/template. I have borrowed some ideas from gomplate, especially the argument style for data sources / templates. I did contribute towards those templates, but there it is.

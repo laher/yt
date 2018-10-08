@@ -9,6 +9,16 @@ import (
 	"text/template"
 )
 
+var funcMap = template.FuncMap{
+	"yaml":      toYAML,
+	"json":      toJSON,
+	"o":         other,
+	"go":        toGo,
+	"del":       del,
+	"set":       set,
+	"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
+}
+
 func spout(output io.Writer, dataSources map[string]source, templateSources map[string]source, maxBufferSize int) error {
 	mainDS, ok := dataSources[mainSource]
 	if !ok {
@@ -23,26 +33,28 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 		return err
 	}
 
-	funcMap := template.FuncMap{
-		"yaml":      toYAML,
-		"json":      toJSON,
-		"o":         other,
-		"go":        toGo,
-		"del":       del,
-		"set":       set,
-		"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
-		"ds": func(k string) interface{} {
-			ds := dataSources[k]
-			rdr, err := os.Open(ds.path)
+	// index is represented as '...int' just so that it can be an optional parameter
+	funcMap["ds"] = func(k string, index ...int) interface{} {
+		ds := dataSources[k]
+		var (
+			rdr io.ReadCloser
+			err error
+		)
+		rdr, err = os.Open(ds.path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if len(index) > 0 {
+			rdr, err = split(rdr, index[0], maxBufferSize)
 			if err != nil {
 				log.Fatal(err)
 			}
-			ret, err := unmarshalInput(rdr, maxBufferSize)
-			if err != nil {
-				log.Fatal(err)
-			}
-			return ret
-		},
+		}
+		ret, err := unmarshalInput(rdr, maxBufferSize)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return ret
 	}
 	trdr, err := templateSources[mainSource].GetReader()
 	if err != nil {

@@ -18,7 +18,6 @@ const (
 var (
 	query = flag.String("q", defaultTemplate, "Main yaml query [unless overridden by -t templates]")
 	//documentSplitQuery = flag.String("dq", "", "Document split query")
-	index         = flag.Int("di", 0, "Select doc by order of appearance in the input")
 	maxBufferSize = flag.Int("b", maxBufferSizeDefault, "Max buffer size per input file")
 	errNoMatch    = fmt.Errorf("no match")
 
