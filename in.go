@@ -65,45 +65,10 @@ func split(input io.ReadCloser, docIndex int, maxBufferSize int) (io.ReadCloser,
 			//log.Printf("skip")
 			continue
 		}
-		/*
-			if documentSplitQuery != "" {
-				//log.Printf("scanned: %s", string(y))
-				data := make(map[interface{}]interface{})
-				err := yaml.Unmarshal(y, &data)
-				if err != nil {
-					return nil, fmt.Errorf("unmarshaling: %s", err)
-				}
-				funcMap := template.FuncMap{
-					"yaml":      toYAML,
-					"o":         other,
-					"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
-				}
-				tmpl, err := template.New("test").Funcs(funcMap).Parse(documentSplitQuery)
-				if err != nil {
-					return nil, fmt.Errorf("parsing: %s", err)
-				}
-				b := bytes.NewBuffer([]byte{})
-				// Run the template to verify the output.
-				err = tmpl.Execute(b, data)
-				if err != nil {
-					return nil, fmt.Errorf("execution: %s", err)
-				}
-				st := b.String()
-				//log.Printf("output: [%s]", st)
-				//println("[", st, "]", len(st), len(strings.TrimSpace(st)))
-
-				if strings.TrimSpace(st) == "true" {
-					//fmt.Printf("---%s", string(y))
-
-					return ioutil.NopCloser(bytes.NewBuffer(y)), nil
-				}
-			} else {
-		*/
 		if i == docIndex {
 			//fmt.Printf("---%s", string(y))
 			return ioutil.NopCloser(bytes.NewBuffer(y)), nil
 		}
-		//}
 		i++
 	}
 	return nil, errNoMatch

@@ -40,7 +40,7 @@ var templates strslice
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprint(flag.CommandLine.Output(), `YAML tool
+		fmt.Fprint(flag.CommandLine.Output(), `YAML tarantosaurus
 
 Usage:
  yt -d data.yaml
@@ -52,21 +52,6 @@ Usage:
 	flag.Var(&dataSources, "d", "Data source(s)")
 	flag.Var(&templates, "t", "Template file(s)")
 	flag.Parse()
-	/*
-		var (
-			err   error
-			input io.ReadCloser
-		)
-		input = os.Stdin
-
-		if *index > 0 { // || *documentSplitQuery != "" {
-			input, err = split(input, *index, *maxBufferSize)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-		} // else just process the first doc
-	*/
 	// get data ...
 	data, err := getSources(dataSources)
 	if err != nil {
