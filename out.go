@@ -12,7 +12,7 @@ import (
 var funcMap = template.FuncMap{
 	"yaml":      toYAML,
 	"json":      toJSON,
-	"o":         other,
+	"o":         other, // TODO remove this
 	"go":        toGo,
 	"del":       del,
 	"set":       set,
@@ -36,7 +36,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 	}
 
 	// index is represented as '...int' just so that it can be an optional parameter
-	funcMap["ds"] = func(k string, index ...int) interface{} {
+	funcMap["ds"] = func(k string, index ...int) map[interface{}]interface{} {
 		ds := dataSources[k]
 		var (
 			rdr io.ReadCloser
@@ -57,6 +57,13 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 			log.Fatal(err)
 		}
 		return ret
+	}
+	funcMap["dss"] = func() []string {
+		dss := []string{}
+		for k := range dataSources {
+			dss = append(dss, k)
+		}
+		return dss
 	}
 	trdr, err := templateSources[mainSource].GetReader()
 	if err != nil {
