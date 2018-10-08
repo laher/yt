@@ -40,13 +40,13 @@ var templates strslice
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), `YAML tool
+		fmt.Fprint(flag.CommandLine.Output(), `YAML tool
 
 Usage:
- %s -d data.yaml
- %s < data.yaml
+ yt -d data.yaml
+ cat data.yaml|yt -q '{{ .kind }}'
  
-`, os.Args[0], os.Args[0])
+`)
 		flag.PrintDefaults()
 	}
 	flag.Var(&dataSources, "d", "Data source(s)")

@@ -16,6 +16,8 @@ var funcMap = template.FuncMap{
 	"go":        toGo,
 	"del":       del,
 	"set":       set,
+	"cr":        func() string { return "\n" },
+	"newdoc":    func() string { return "---\n" },
 	"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
 }
 
