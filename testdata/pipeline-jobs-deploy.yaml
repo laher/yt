@@ -1,0 +1,67 @@
+jobs:
+  - name: deploy-dev
+    serial: true
+    plan:
+      - aggregate:
+        - get: gitrepo
+          passed: [build-image]
+        - get: version
+          trigger: true
+          passed: [build-image]
+      - task: deploy-kubernetes
+        file: gitrepo/tools/ci-template/tasks/deploy-kubernetes.yaml
+        input_mapping:
+          template: gitrepo
+          version: version
+        params:
+          KUBERNETES_NAME: laher-dev
+          KUBERNETES_SERVER: ((k8s-laher-dev-server))
+          KUBERNETES_VERSION: ((k8s-laher-dev-version))
+          KUBERNETES_CERTIFICATE_AUTHORITY: ((k8s-laher-dev-certificate-authority))
+          KUBERNETES_CLIENT_CERTIFICATE: ((k8s-client-certificate))
+          KUBERNETES_CLIENT_KEY: ((k8s-client-key))
+          TEMPLATE: src/{{ .name }}/kube.deploy.dev.{{ getenv "KUBERNETES_NAMESPACE" }}.yaml
+          KUBERNETES_NAMESPACE: '{{getenv "KUBERNETES_NAMESPACE" "mc-mymonorepo"}}'
+          CONFIRM_VERSION_LABEL: '{{ if has . "k8s-label" }}{{ index . "k8s-label" }}{{ else }}name={{ .name }}{{ end }}'
+          CONFIRM_VERSION_ITERATIONS: '{{ if has . "confirm-version-iterations" }}{{ index . "confirm-version-iterations" }}{{ else }}6{{ end }}'
+          CONFIRM_VERSION_SLEEP_S: '{{ if has . "confirm-version-sleep-s" }}{{ index . "confirm-version-sleep-s" }}{{ else }}20{{ end }}'
+        on_success:
+          put: slack
+          params:
+            message:
+              icon_emoji: ':yay:'
+              user_name: Concourse CI
+              text: 'mymonorepo dev :flag-au: deploy {{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}} succeeded, trigger prod deploy here: https://concourse.laher-dev.co/teams/{{"{{"}}$BUILD_TEAM_NAME{{"}}"}}/pipelines/{{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}}/jobs/deploy-prod :ship:'
+        on_failure:
+          put: slack
+          params:
+            message:
+              icon_emoji: ':sadpanda:'
+              user_name: Concourse CI
+              text: '<!here> mymonorepo dev :flag-au: deploy {{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}} failed: https://concourse.laher-dev.co/teams/{{"{{"}}$BUILD_TEAM_NAME{{"}}"}}/pipelines/{{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}}/jobs/{{"{{"}}$BUILD_JOB_NAME{{"}}"}}/builds/{{"{{"}}$BUILD_NAME{{"}}"}}'
+
+  - name: test-integration-dev
+    serial: true
+    plan:
+      - aggregate:
+        - get: gitrepo
+          passed: [deploy-dev]
+        - get: tasks
+        - get: version
+          passed: [deploy-dev]
+          trigger: true
+      - task: test
+        file: tasks/compose-tests/tasks/test.yaml
+        input_mapping:
+          repo: gitrepo
+        privileged: true
+        params:
+          TEST_DIR: ./src/{{ .name }}
+          DC_RUN_ARGS: -f docker-compose.dev.{{getenv "KUBERNETES_NAMESPACE" "mc-mymonorepo"}}.yaml run -e JWT_KEY=((mymonorepo-jwt-key-dev)) --rm test
+        on_failure:
+          put: slack
+          params:
+            message:
+              icon_emoji: ':sadpanda:'
+              user_name: Concourse CI
+              text: '<!here> mymonorepo test-integration {{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}} failed: https://concourse.laher-dev.co/teams/{{"{{"}}$BUILD_TEAM_NAME{{"}}"}}/pipelines/{{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}}/jobs/{{"{{"}}$BUILD_JOB_NAME{{"}}"}}/builds/{{"{{"}}$BUILD_NAME{{"}}"}}'

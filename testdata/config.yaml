@@ -1,0 +1,8 @@
+name: my-svc 
+ecr_repo: my-svc 
+item: 1.0
+dev:
+  test-integration: true
+prod:
+  test-integration: true
+  auto-deploy: true

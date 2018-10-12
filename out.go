@@ -5,21 +5,8 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"os"
 	"text/template"
 )
-
-var funcMap = template.FuncMap{
-	"yaml":      toYAML,
-	"json":      toJSON,
-	"o":         other, // TODO remove this
-	"go":        toGo,
-	"del":       del,
-	"set":       set,
-	"cr":        func() string { return "\n" },
-	"newdoc":    func() string { return "---\n" },
-	"tableflip": func() string { return "(╯°□°）╯︵ ┻━┻" },
-}
 
 func spout(output io.Writer, dataSources map[string]source, templateSources map[string]source, maxBufferSize int) error {
 	mainDS, ok := dataSources[mainSource]
@@ -36,13 +23,26 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 	}
 
 	// index is represented as '...int' just so that it can be an optional parameter
-	funcMap["ds"] = func(k string, index ...int) map[interface{}]interface{} {
-		ds := dataSources[k]
+	funcs := funcMap()
+	funcs["ds"] = func(k string, index ...int) map[interface{}]interface{} {
+		ds, ok := dataSources[k]
+		if !ok {
+			// not found. Die with helpful list of data sources
+			kbuf := ""
+			for k := range dataSources {
+				if len(kbuf) > 0 {
+					kbuf += ","
+				}
+				kbuf += "'" + k + "'"
+			}
+			log.Fatalf("Data source not found. Data sources: [%s]", kbuf)
+
+		}
 		var (
 			rdr io.ReadCloser
 			err error
 		)
-		rdr, err = os.Open(ds.path)
+		rdr, err = fs.Open(ds.path)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -58,7 +58,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 		}
 		return ret
 	}
-	funcMap["dss"] = func() []string {
+	funcs["dss"] = func() []string {
 		dss := []string{}
 		for k := range dataSources {
 			dss = append(dss, k)
@@ -73,7 +73,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 	if err != nil {
 		return err
 	}
-	tmpl, err := template.New("main").Funcs(funcMap).Parse(string(b))
+	tmpl, err := template.New("main").Funcs(funcs).Parse(string(b))
 	if err != nil {
 		return err
 	}

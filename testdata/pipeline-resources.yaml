@@ -1,0 +1,79 @@
+resource_types:
+  - name: slack-post-resource
+    type: docker-image
+    source:
+      repository: jakobleben/slack-post-resource
+  - name: slack-read-resource
+    type: docker-image
+    source:
+      repository: jakobleben/slack-read-resource
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
+resources:
+  - name: gitrepo
+    type: git
+    source:
+      uri: https://github.com/laher/mymonorepo.git
+      username: ((github-username))
+      password: ((github-password))
+      branch: '{{getenv "mymonorepo_BRANCH" "master"}}'
+      paths:
+        - src/{{ .name }}/*
+        - src/vendor/*
+        - src/micro/*
+        - src/shared/*
+        - tools/ci-template/version
+      ignore_paths:
+        - src/shared/shared-config-kube-fr.yaml
+        - src/shared/shared-config-kube-us.yaml
+    check_every: 24h
+  - name: slack
+    type: slack-post-resource
+    source:
+      token: ((slack-token))
+      channel_id: '#mymonorepo-internal'
+  - name: pull-request
+    type: pull-request
+    source:
+      repo: laher/mymonorepo
+      access_token: ((github-access-token))
+      username: ((github-username))
+      password: ((github-password))
+      every: true
+      branch: '{{getenv "mymonorepo_BRANCH" "master"}}'
+      paths:
+        - src/{{ .name }}/*
+    check_every: 24h
+  - name: image
+    type: docker-image
+    source:
+      repository: mydockerregistry.ecr.region.amazonaws.com/{{ .ecr_repo }}
+      aws_access_key_id: ((concourse-aws-access-key-id))
+      aws_secret_access_key: ((concourse-aws-secret-access-key))
+  - name: version
+    type: semver
+    source:
+      initial_version: '0.0.0'
+      key: '{{ .name }}/version'
+      bucket: laher-concourse-semver
+      access_key_id: ((concourse-aws-access-key-id))
+      secret_access_key: ((concourse-aws-secret-access-key))
+      region_name: ap-southeast-2
+  - name: tasks
+    type: git
+    source:
+      uri: git@github.com:laher/concourse-tasks.git
+      branch: master 
+      private_key: |
+          ((github-private-key))
+  - name: go-app
+    type: s3
+    source:
+      access_key_id: ((concourse-aws-access-key-id))
+      secret_access_key: ((concourse-aws-secret-access-key))
+      bucket: laher-concourse-artifacts
+      region_name: ap-southeast-2
+      regexp: apps/{{ .name }}/{{ .name }}-(\d+\.\d+\.\d+)

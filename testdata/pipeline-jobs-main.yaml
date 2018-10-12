@@ -1,0 +1,118 @@
+jobs:
+  - name: bump-version
+    serial: true
+    plan:
+      - aggregate:
+        - get: gitrepo
+          trigger: true
+        - get: version
+        - get: tasks
+      - task: bump-version
+        file: tasks/version/tasks/bump-version.yaml
+        input_mapping:
+          repo: gitrepo
+        params:
+          VERSION_PATH: "src/{{ .name }}/version"
+      - put: version
+        params: {file: new-version/version}
+
+  - name: test
+    serial: true
+    plan:
+      - aggregate:
+        - get: gitrepo
+          passed: [bump-version]
+        - get: tasks
+        - get: version
+          passed: [bump-version]
+          trigger: true
+      - task: test
+        file: tasks/compose-tests/tasks/test.yaml
+        input_mapping:
+          repo: gitrepo
+        privileged: true
+        params:
+          TEST_DIR: './src/{{ .name }}'
+          ITEM: '{{ .item | num }}'
+          ITEM_STR: '{{ .item }}'
+        on_failure:
+          put: slack
+          params:
+            message:
+              icon_emoji: ':sadpanda:'
+              user_name: Concourse CI
+              text: '<!here> mymonorepo test {{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}} failed: https://concourse.laher-dev.co/teams/{{"{{"}}$BUILD_TEAM_NAME{{"}}"}}/pipelines/{{"{{"}}$BUILD_PIPELINE_NAME{{"}}"}}/jobs/{{"{{"}}$BUILD_JOB_NAME{{"}}"}}/builds/{{"{{"}}$BUILD_NAME{{"}}"}}'
+
+  - name: build
+    serial: true
+    plan:
+      - aggregate:
+        - get: gitrepo
+          passed: [bump-version]
+        - get: version
+          passed: [bump-version]
+          trigger: true
+      - task: build
+        file: gitrepo/tools/ci-template/tasks/build.yaml
+        input_mapping:
+          repo: gitrepo
+        params:
+          SRC_PATH: src
+          NAME: "{{ .name }}"
+          CGO_ENABLED: "0"
+          GO_TARGET_PATH: "github.com/laher/mymonorepo/src/{{ .name }}"
+      - put: go-app
+        params:
+          file: "bin/{{ .name }}-*"
+
+  - name: build-image
+    serial: true
+    plan:
+      - aggregate:
+        - get: gitrepo
+          passed: [build, test]
+        - get: version
+          trigger: true
+          passed: [build, test]
+        - get: go-app
+          passed: [build]
+      - task: prepare-docker-build
+        file: gitrepo/tools/ci-template/tasks/prepare-docker-build.yaml
+        input_mapping:
+          repo: gitrepo
+        params:
+          NAME: "{{ .name }}"
+      - put: image
+        params:
+            build: docker-src
+            tag: version/version
+            tag_as_latest: false
+
+  - name: verify
+    plan:
+      - aggregate:
+        - get: pull-request
+          trigger: true
+          version: every
+          params: {fetch_merge: true}
+        - get: tasks
+      - put: pull-request
+        params:
+          path: pull-request
+          status: pending
+      - task: test
+        file: tasks/compose-tests/tasks/test.yaml
+        input_mapping: {repo: pull-request}
+        privileged: true
+        params:
+          TEST_DIR: "./src/{{ .name }}"
+        on_success:
+          put: pull-request
+          params:
+            path: pull-request
+            status: success
+        on_failure:
+          put: pull-request
+          params:
+            path: pull-request
+            status: failure
