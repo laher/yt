@@ -1,8 +1,11 @@
 ---
 title: "Introduction to yt Templating"
 date: 2018-10-20T03:39:23+13:00
-draft: true
 toc: true
+menu:
+  main:
+    templating:
+      {}
 ---
 
 `yt` uses Go's `text/template` package for templating.
