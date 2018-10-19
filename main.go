@@ -52,14 +52,26 @@ Usage:
 	flag.Var(&dataSources, "d", "Data source(s)")
 	flag.Var(&templates, "t", "Template file(s)")
 	flag.Parse()
+	args := flag.Args()
 	// get data ...
 	data, err := getSources(dataSources)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if _, ok := data[mainSource]; !ok {
-		data[mainSource] = source{
-			typ: stdin,
+		switch len(args) {
+		case 1:
+			data[mainSource] = source{
+				typ:  file,
+				path: args[0],
+			}
+		case 0:
+			data[mainSource] = source{
+				typ: stdin,
+			}
+		default:
+			log.Fatal("Unsupported (multiple cli args). Please pipe to yt or use a single cli arg")
+
 		}
 	}
 	tpls, err := getSources(templates)
