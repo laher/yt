@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>yt: a tool for yaml on yt - a tool for yaml</title>
-    <link>https://yt.github.io/</link>
+    <link>https://www.laher.net.nz/yt/</link>
     <description>Recent content in yt: a tool for yaml on yt - a tool for yaml</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="https://yt.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.laher.net.nz/yt/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
