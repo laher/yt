@@ -1,0 +1,5 @@
+baseURL = "https://yt.github.io/"
+languageCode = "en-us"
+title = "yt - a tool for yaml"
+theme = "ananke"
+publishDir = "../docs"
