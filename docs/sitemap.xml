@@ -3,7 +3,18 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://www.laher.net.nz/yt/posts/introduction-to-yt-templating/</loc>
+    <lastmod>2018-10-20T03:39:23+13:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://www.laher.net.nz/yt/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.laher.net.nz/yt/posts/</loc>
+    <lastmod>2018-10-20T03:39:23+13:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -14,6 +25,7 @@
   
   <url>
     <loc>https://www.laher.net.nz/yt/</loc>
+    <lastmod>2018-10-20T03:39:23+13:00</lastmod>
   </url>
   
 </urlset>
