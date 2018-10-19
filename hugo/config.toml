@@ -1,4 +1,4 @@
-baseURL = "https://yt.github.io/"
+baseURL = "https://www.laher.net.nz/yt/"
 languageCode = "en-us"
 title = "yt - a tool for yaml"
 theme = "ananke"

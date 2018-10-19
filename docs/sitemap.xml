@@ -3,17 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://yt.github.io/categories/</loc>
+    <loc>https://www.laher.net.nz/yt/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yt.github.io/tags/</loc>
+    <loc>https://www.laher.net.nz/yt/tags/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://yt.github.io/</loc>
+    <loc>https://www.laher.net.nz/yt/</loc>
   </url>
   
 </urlset>
