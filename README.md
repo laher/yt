@@ -10,5 +10,5 @@
 
 `yt`'s docs are hosted at https://www.laher.net.nz/yt/
 
-See also the [html](./docs/index.html) or [Markdown](./hugo/content/) (Markdown) for user documentation
+See also the [html](./docs/index.html) or [Markdown](./hugo/content/) user documentation
 
