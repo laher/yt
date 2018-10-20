@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://www.laher.net.nz/yt/posts/use-cases/</loc>
+    <lastmod>2018-10-20T15:58:55+13:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.laher.net.nz/yt/posts/getting-started/</loc>
+    <lastmod>2018-10-20T15:58:49+13:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://www.laher.net.nz/yt/posts/about/</loc>
     <lastmod>2018-10-20T14:50:39+13:00</lastmod>
   </url>
@@ -19,7 +29,7 @@
   
   <url>
     <loc>https://www.laher.net.nz/yt/posts/</loc>
-    <lastmod>2018-10-20T14:50:39+13:00</lastmod>
+    <lastmod>2018-10-20T15:58:55+13:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -30,7 +40,7 @@
   
   <url>
     <loc>https://www.laher.net.nz/yt/</loc>
-    <lastmod>2018-10-20T14:50:39+13:00</lastmod>
+    <lastmod>2018-10-20T15:58:55+13:00</lastmod>
   </url>
   
 </urlset>
