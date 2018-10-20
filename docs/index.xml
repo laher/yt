@@ -6,19 +6,10 @@
     <description>Recent content on yt - a tool for yaml</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 20 Oct 2018 15:58:55 +1300</lastBuildDate>
+    <lastBuildDate>Sat, 20 Oct 2018 15:58:49 +1300</lastBuildDate>
     
 	<atom:link href="https://www.laher.net.nz/yt/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Use Cases</title>
-      <link>https://www.laher.net.nz/yt/posts/use-cases/</link>
-      <pubDate>Sat, 20 Oct 2018 15:58:55 +1300</pubDate>
-      
-      <guid>https://www.laher.net.nz/yt/posts/use-cases/</guid>
-      <description>TODO: content to follow soon …</description>
-    </item>
     
     <item>
       <title>Getting Started</title>
