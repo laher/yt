@@ -29,7 +29,10 @@
     
 
     <meta property="og:title" content="Getting Started" />
-<meta property="og:description" content="Getting started TODO … content to follow soon" />
+<meta property="og:description" content="Installation I&rsquo;ll create a release once I&rsquo;m happy. Until then, you&rsquo;ll need to install go in order to install yt.
+go get github.com/laher/yt  Run The default behaviour parses the input as YAML and spits it out in the same format.
+Try running yt against the testdata/k8s.yaml file provided in this repository (it&rsquo;s an anonymised kubernetes file, containing 3 yaml documents)
+ yt &lt; testdata/k8s.yaml  This is effectively the same as setting the main query to &#39;{{." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://www.laher.net.nz/yt/posts/getting-started/" />
 
@@ -50,19 +53,25 @@
 
 
 <meta itemprop="name" content="Getting Started">
-<meta itemprop="description" content="Getting started TODO … content to follow soon">
+<meta itemprop="description" content="Installation I&rsquo;ll create a release once I&rsquo;m happy. Until then, you&rsquo;ll need to install go in order to install yt.
+go get github.com/laher/yt  Run The default behaviour parses the input as YAML and spits it out in the same format.
+Try running yt against the testdata/k8s.yaml file provided in this repository (it&rsquo;s an anonymised kubernetes file, containing 3 yaml documents)
+ yt &lt; testdata/k8s.yaml  This is effectively the same as setting the main query to &#39;{{.">
 
 
 <meta itemprop="datePublished" content="2018-10-20T15:58:49&#43;13:00" />
 <meta itemprop="dateModified" content="2018-10-20T15:58:49&#43;13:00" />
-<meta itemprop="wordCount" content="8">
+<meta itemprop="wordCount" content="330">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Getting Started"/>
-<meta name="twitter:description" content="Getting started TODO … content to follow soon"/>
+<meta name="twitter:description" content="Installation I&rsquo;ll create a release once I&rsquo;m happy. Until then, you&rsquo;ll need to install go in order to install yt.
+go get github.com/laher/yt  Run The default behaviour parses the input as YAML and spits it out in the same format.
+Try running yt against the testdata/k8s.yaml file provided in this repository (it&rsquo;s an anonymised kubernetes file, containing 3 yaml documents)
+ yt &lt; testdata/k8s.yaml  This is effectively the same as setting the main query to &#39;{{."/>
 
   </head>
 
@@ -90,8 +99,8 @@
           </li>
           
           <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/yt/posts/introduction-to-yt-templating/" title="Introduction to yt Templating page">
-              Introduction to yt Templating
+            <a class="hover-white no-underline white-90" href="/yt/posts/getting-started/" title="Getting Started page">
+              Getting Started
             </a>
           </li>
           
@@ -139,9 +148,95 @@
 
     <main class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
 
-<h1 id="getting-started">Getting started</h1>
+<h2 id="installation">Installation</h2>
 
-<p>TODO … content to follow soon</p>
+<p>I&rsquo;ll create a release once I&rsquo;m happy. Until then, you&rsquo;ll need to <a href="https://golang.org/doc/install">install go</a> in order to install yt.</p>
+
+<pre><code>go get github.com/laher/yt
+</code></pre>
+
+<h2 id="run">Run</h2>
+
+<p>The default behaviour parses the input as YAML and spits it out in the same format.</p>
+
+<p>Try running <code>yt</code> against the <code>testdata/k8s.yaml</code> file provided in this repository (it&rsquo;s an anonymised kubernetes file, containing 3 yaml documents)</p>
+
+<pre><code>    yt &lt; testdata/k8s.yaml 
+</code></pre>
+
+<p>This is effectively the same as setting the main query to <code>'{{.|yaml}}'</code></p>
+
+<pre><code>    yt -q '{{.|yaml}}' &lt; testdata/k8s.yaml 
+</code></pre>
+
+<h2 id="query-syntax">Query syntax</h2>
+
+<p>See our <a href="/yt/posts/templating/">Introduction to Templating</a></p>
+
+<h3 id="queries-by-example">Queries by example</h3>
+
+<p>These are just a few examples of querying with <code>yt</code></p>
+
+<h4 id="nested-items">Nested items</h4>
+
+<p>(outputted in Go&rsquo;s &lsquo;sprintf&rsquo; format)</p>
+
+<pre><code>   yt -q '{{.metadata.labels.app}}' &lt; testdata/k8s.yaml
+</code></pre>
+
+<h4 id="selected-functions">Selected functions</h4>
+
+<p>Please see golang.org/pkg/text/template for a comprehensive list of built-in functions. These are just a few examples</p>
+
+<h5 id="index-is-useful-when-one-of-your-keys-itself-contains-a-dot">index is useful when one of your keys itself contains a dot</h5>
+
+<pre><code>   yt -q '{{index .data &quot;config.json&quot;}}' &lt; testdata/k8s.yaml
+</code></pre>
+
+<h5 id="js-escapes-javascript"><code>js</code> escapes javascript</h5>
+
+<p>(pipes are similar to jq&rsquo;s piping syntax)</p>
+
+<pre><code>  yt -q '{{index .data &quot;config.json&quot;|js}}' &lt; testdata/k8s.yaml
+</code></pre>
+
+<h5 id="go-generates-a-go-syntax-representation-of-the-result"><code>go</code> generates a Go-syntax representation of the result</h5>
+
+<pre><code>  yt -q '{{.metadata|go}}' &lt; testdata/k8s.yaml
+</code></pre>
+
+<h5 id="or">or</h5>
+
+<pre><code>  yt -q '{{or .metadata.labels.app .spec.replicas}}' &lt; testdata/k8s.yaml
+</code></pre>
+
+<p>There&rsquo;s lots of other built-in stuff, check go&rsquo;s docs.</p>
+
+<h2 id="data-sources">Data sources:</h2>
+
+<p>You can specify multiple sources of data.yaml</p>
+
+<pre><code>  yt -d testdata/k8s.yaml -d additional=testdata/additional-data.yaml -q '{{ . |yaml}}{{ with (ds &quot;additional) }}{{ .|yaml}}{{ end }}'
+</code></pre>
+
+<h2 id="selecting-a-root-doc-from-a-multi-document-input">Selecting a root doc from a multi-document input</h2>
+
+<p>You can select a different root document during datasource selection.</p>
+
+<p>e.g. for the second document (index 1): <code>yt -q '{{ (ds &quot;.&quot; 1).kind }}' &lt; testdata/k8s.yaml</code></p>
+
+<h3 id="merging-data-sources">Merging data sources:</h3>
+
+<p>Write some data from another doc into this doc</p>
+
+<pre><code>yt -q '{{set . &quot;data&quot; (ds &quot;x&quot;).data}}{{.|yaml}}' -d x=additional-data.yaml &lt; testdata/k8s.yaml
+</code></pre>
+
+<h2 id="large-files-and-streams">Large files and streams</h2>
+
+<p><code>yt</code> is not very efficient with large files. Don&rsquo;t use it for streams, it&rsquo;s not ready for that yet. Perhaps I&rsquo;ll convert it to use more stream-oriented parsing in the future.</p>
+
+<p>In the meantime, use <code>-maxBufferSize=1000000</code> to manage large files. The default should work fine with smmallish files.</p>
 <ul class="pa0">
   
 </ul>
@@ -150,7 +245,38 @@
       </div>
     </main>
 
-    <aside class="w-30-l mt6-l">
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What's in this Posts</p>
+      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#run">Run</a></li>
+<li><a href="#query-syntax">Query syntax</a>
+<ul>
+<li><a href="#queries-by-example">Queries by example</a>
+<ul>
+<li><a href="#nested-items">Nested items</a></li>
+<li><a href="#selected-functions">Selected functions</a>
+<ul>
+<li><a href="#index-is-useful-when-one-of-your-keys-itself-contains-a-dot">index is useful when one of your keys itself contains a dot</a></li>
+<li><a href="#js-escapes-javascript"><code>js</code> escapes javascript</a></li>
+<li><a href="#go-generates-a-go-syntax-representation-of-the-result"><code>go</code> generates a Go-syntax representation of the result</a></li>
+<li><a href="#or">or</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#data-sources">Data sources:</a></li>
+<li><a href="#selecting-a-root-doc-from-a-multi-document-input">Selecting a root doc from a multi-document input</a>
+<ul>
+<li><a href="#merging-data-sources">Merging data sources:</a></li>
+</ul></li>
+<li><a href="#large-files-and-streams">Large files and streams</a></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
 
 
 

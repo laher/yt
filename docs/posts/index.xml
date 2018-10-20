@@ -26,7 +26,10 @@
       <pubDate>Sat, 20 Oct 2018 15:58:49 +1300</pubDate>
       
       <guid>https://www.laher.net.nz/yt/posts/getting-started/</guid>
-      <description>Getting started TODO … content to follow soon</description>
+      <description>Installation I&amp;rsquo;ll create a release once I&amp;rsquo;m happy. Until then, you&amp;rsquo;ll need to install go in order to install yt.
+go get github.com/laher/yt  Run The default behaviour parses the input as YAML and spits it out in the same format.
+Try running yt against the testdata/k8s.yaml file provided in this repository (it&amp;rsquo;s an anonymised kubernetes file, containing 3 yaml documents)
+ yt &amp;lt; testdata/k8s.yaml  This is effectively the same as setting the main query to &#39;{{.</description>
     </item>
     
     <item>
@@ -40,15 +43,15 @@
     </item>
     
     <item>
-      <title>Introduction to yt Templating</title>
-      <link>https://www.laher.net.nz/yt/posts/introduction-to-yt-templating/</link>
+      <title>Templating Intro</title>
+      <link>https://www.laher.net.nz/yt/posts/templating/</link>
       <pubDate>Sat, 20 Oct 2018 03:39:23 +1300</pubDate>
       
-      <guid>https://www.laher.net.nz/yt/posts/introduction-to-yt-templating/</guid>
-      <description>yt uses Go&amp;rsquo;s text/template package for templating.
- The following is only a primer on Go Templates, adapted from Hugo&amp;rsquo;s documentation. For an in-depth look into Go Templates, check the official Go docs.
- Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.
-Basic Syntax Go Templates are files with the addition of variables and functions.</description>
+      <guid>https://www.laher.net.nz/yt/posts/templating/</guid>
+      <description>yt uses the text/template package from Go&amp;rsquo;s standard library.
+For querying yaml, you won&amp;rsquo;t really need to understand Go templates in depth, but once you&amp;rsquo;re generating yaml, then it pays to understand the dialect&amp;hellip;
+The following is only a primer on Go Templates, adapted from Hugo&amp;rsquo;s documentation. For an in-depth look into Go Templates, check the official Go docs.
+Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.</description>
     </item>
     
   </channel>

@@ -1,18 +1,17 @@
 ---
-title: "Introduction to yt Templating"
+title: "Templating Intro"
 date: 2018-10-20T03:39:23+13:00
 toc: true
-menu:
-  main:
-    templating:
-      {}
 ---
 
-`yt` uses Go's `text/template` package for templating.
+`yt` uses the [text/template package](https://golang.org/pkg/text/template) from [Go](https://golang.org)'s standard library.
 
-> The following is only a primer on Go Templates, adapted from [Hugo's](https://gohugo.io) [documentation](https://gohugo.io/templates/introduction/). For an in-depth look into Go Templates, check the official Go docs.
+_For querying yaml, you won't really need to understand Go templates in depth, but once you're generating yaml, then it pays to understand the dialect..._
+
+The following is only a primer on Go Templates, adapted from [Hugo's](https://gohugo.io) [documentation](https://gohugo.io/templates/introduction/). For an in-depth look into Go Templates, check the official Go docs.
 
 Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.
+
 
 ## Basic Syntax
 

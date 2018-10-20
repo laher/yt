@@ -82,8 +82,8 @@
           </li>
           
           <li class="list f5 f4-ns fw4 dib pr3">
-            <a class="hover-white no-underline white-90" href="/yt/posts/introduction-to-yt-templating/" title="Introduction to yt Templating page">
-              Introduction to yt Templating
+            <a class="hover-white no-underline white-90" href="/yt/posts/getting-started/" title="Getting Started page">
+              Getting Started
             </a>
           </li>
           
@@ -150,7 +150,10 @@
       </a>
     </h1>
     <div class="nested-links f5 lh-copy nested-copy-line-height">
-      Getting started TODO … content to follow soon
+      Installation I&rsquo;ll create a release once I&rsquo;m happy. Until then, you&rsquo;ll need to install go in order to install yt.
+go get github.com/laher/yt  Run The default behaviour parses the input as YAML and spits it out in the same format.
+Try running yt against the testdata/k8s.yaml file provided in this repository (it&rsquo;s an anonymised kubernetes file, containing 3 yaml documents)
+ yt &lt; testdata/k8s.yaml  This is effectively the same as setting the main query to '{{.
     </div>
   </div>
 </div>
@@ -176,15 +179,15 @@
   <div class="bg-white mb3 pa4 gray overflow-hidden">
     <span class="f6 db">Posts</span>
     <h1 class="f3 near-black">
-      <a href="/yt/posts/introduction-to-yt-templating/" class="link black dim">
-        Introduction to yt Templating
+      <a href="/yt/posts/templating/" class="link black dim">
+        Templating Intro
       </a>
     </h1>
     <div class="nested-links f5 lh-copy nested-copy-line-height">
-      yt uses Go&rsquo;s text/template package for templating.
- The following is only a primer on Go Templates, adapted from Hugo&rsquo;s documentation. For an in-depth look into Go Templates, check the official Go docs.
- Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.
-Basic Syntax Go Templates are files with the addition of variables and functions.
+      yt uses the text/template package from Go&rsquo;s standard library.
+For querying yaml, you won&rsquo;t really need to understand Go templates in depth, but once you&rsquo;re generating yaml, then it pays to understand the dialect&hellip;
+The following is only a primer on Go Templates, adapted from Hugo&rsquo;s documentation. For an in-depth look into Go Templates, check the official Go docs.
+Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.
     </div>
   </div>
 </div>

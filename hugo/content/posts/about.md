@@ -29,3 +29,10 @@ I began writing this tool in 2017, initially to support multi-document files for
 
 I wanted a tool to parse and generate yaml. yt helps in some interesting ways. 
 
+## Acknowledgements
+
+All of the hard stuff was done in [go-yaml](https://github.com/go-yaml/yaml) and in go itself. Thanks all. 
+
+yt's name is deliberately similar to yq and jq. The y is for yaml and the t might be for 'template', maybe for 'tool', or most likely for 'tarantosaurus'.
+
+Thanks to [gomplate](https://github.com/hairyhenderson/gomplate) for a wonderful example of a cli tool harnessing go's text/template. I have borrowed some ideas from gomplate, especially the argument style for data sources / templates. I did contribute towards those templates, but there it is.

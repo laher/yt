@@ -5,6 +5,6 @@ description: "The yaml tool to yaml all the other tools. Kinda."
 ---
 Welcome to the `yt` documentation site.
 
-[About](/posts/about/) |
-[Use cases](/posts/use-cases/) |
-[Getting Started](/posts/getting-started/)
+[About](/yt/posts/about/) |
+[Use cases](/yt/posts/use-cases/) |
+[Getting Started](/yt/posts/getting-started/)
