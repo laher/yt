@@ -6,10 +6,20 @@
     <description>Recent content in Posts on yt - a tool for yaml</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 20 Oct 2018 03:39:23 +1300</lastBuildDate>
+    <lastBuildDate>Sat, 20 Oct 2018 14:50:39 +1300</lastBuildDate>
     
 	<atom:link href="https://www.laher.net.nz/yt/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>About</title>
+      <link>https://www.laher.net.nz/yt/posts/about/</link>
+      <pubDate>Sat, 20 Oct 2018 14:50:39 +1300</pubDate>
+      
+      <guid>https://www.laher.net.nz/yt/posts/about/</guid>
+      <description>yt is a YAML processor in the spirit of jq and sed.
+ yt can work with multi-document YAML files. yt is VERY experimental - please use with care.  Goals  Query yaml documents  Support multi-document files (with --- separator lines)  Manipulate yaml documents  Generate yaml Merge and combine yaml docs Keep yaml separate from looping / conditionals   Why Yaml seems to be everywhere at the moment, particularly in Ops tooling - see Kubernetes, Terraform, Concourse, Circle CI &amp;hellip;</description>
+    </item>
     
     <item>
       <title>Introduction to yt Templating</title>

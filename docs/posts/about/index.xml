@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>About on yt - a tool for yaml</title>
+    <link>https://www.laher.net.nz/yt/posts/about/</link>
+    <description>Recent content in About on yt - a tool for yaml</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 20 Oct 2018 14:50:39 +1300</lastBuildDate>
+    
+	<atom:link href="https://www.laher.net.nz/yt/posts/about/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>

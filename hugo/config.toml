@@ -3,3 +3,25 @@ languageCode = "en-us"
 title = "yt - a tool for yaml"
 theme = "ananke"
 publishDir = "../docs"
+
+#MetaDataFormat = "yaml"
+#DefaultContentLanguage = "en"
+#SectionPagesMenu = "main"
+#Paginate = 5 # this is set low for demonstrating with dummy content. Set to a higher number
+#googleAnalytics = ""
+#enableRobotsTXT = true
+
+[params]
+  favicon = ""
+  description = "A tool for yaml"
+  facebook = ""
+  twitter = ""
+  instagram = ""
+  youtube = ""
+  github = "https://github.com/laher/yt"
+  gitlab = ""
+  linkedin = ""
+  # choose a background color from any on this page: http://tachyons.io/docs/themes/skins/ and preface it with "bg-"
+  background_color_class = "bg-navy"
+  featured_image = ""
+  recent_posts_number = 2
