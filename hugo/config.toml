@@ -4,12 +4,12 @@ title = "yt - a tool for yaml"
 theme = "ananke"
 publishDir = "../docs"
 
-#MetaDataFormat = "yaml"
-#DefaultContentLanguage = "en"
-#SectionPagesMenu = "main"
-#Paginate = 5 # this is set low for demonstrating with dummy content. Set to a higher number
-#googleAnalytics = ""
-#enableRobotsTXT = true
+MetaDataFormat = "yaml"
+DefaultContentLanguage = "en"
+#SectionPagesMenu = "main" # autotmatically add sections to the named menu
+Paginate = 10 # this is set low for demonstrating with dummy content. Set to a higher number
+googleAnalytics = ""
+enableRobotsTXT = true
 
 [params]
   favicon = ""
