@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-func spout(output io.Writer, dataSources map[string]source, templateSources map[string]source, maxBufferSize int) error {
+func spout(output io.Writer, dataSources map[string]source, scriptSources map[string]source, maxBufferSize int) error {
 	mainDS, ok := dataSources[mainSource]
 	if !ok {
 		return fmt.Errorf("Main data source undefined")
@@ -65,7 +65,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 		}
 		return dss
 	}
-	trdr, err := templateSources[mainSource].GetReader()
+	trdr, err := scriptSources[mainSource].GetReader()
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 	if err != nil {
 		return err
 	}
-	for k, s := range templateSources {
+	for k, s := range scriptSources {
 		switch s.typ {
 		case str, stdin:
 			rdr, err := s.GetReader()
@@ -99,8 +99,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 		}
 
 	}
-
-	// Run the template to verify the output.
+	// run the script
 	err = tmpl.Execute(output, data)
 	if err != nil {
 		return err

@@ -11,12 +11,12 @@ import (
 )
 
 const (
-	defaultTemplate      = "{{.|yaml}}"
+	defaultQuery         = "{{.|yaml}}"
 	maxBufferSizeDefault = bufio.MaxScanTokenSize
 )
 
 var (
-	query = flag.String("q", defaultTemplate, "Main yaml query [unless overridden by -t templates]")
+	query = flag.String("q", defaultQuery, "Main yaml query [unless overridden by -s script.yt]")
 	//documentSplitQuery = flag.String("dq", "", "Document split query")
 	maxBufferSize = flag.Int("b", maxBufferSizeDefault, "Max buffer size per input file")
 	errNoMatch    = fmt.Errorf("no match")
@@ -36,7 +36,7 @@ func (i *strslice) Set(value string) error {
 }
 
 var dataSources strslice
-var templates strslice
+var scripts strslice
 
 func main() {
 	flag.Usage = func() {
@@ -50,7 +50,7 @@ Usage:
 		flag.PrintDefaults()
 	}
 	flag.Var(&dataSources, "d", "Data source(s)")
-	flag.Var(&templates, "t", "Template file(s)")
+	flag.Var(&scripts, "s", "Script file(s)")
 	flag.Parse()
 	args := flag.Args()
 	// get data ...
@@ -74,7 +74,7 @@ Usage:
 
 		}
 	}
-	tpls, err := getSources(templates)
+	tpls, err := getSources(scripts)
 	if err != nil {
 		log.Fatal(err)
 	}
