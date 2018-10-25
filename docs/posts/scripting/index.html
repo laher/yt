@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>yt - a tool for yaml  | Scripting Intro</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.40.1" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/yt/dist/css/app.e08a958ae3e530145318b6373195c765.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+
+    <meta property="og:title" content="Scripting Intro" />
+<meta property="og:description" content="yt uses the text/template package from Go&rsquo;s standard library.
+NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml
+For querying yaml, you won&rsquo;t really need to understand Go templates in depth, but once you&rsquo;re generating yaml, then it pays to understand the dialect&hellip;" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.laher.net.nz/yt/posts/scripting/" />
+
+
+
+<meta property="article:published_time" content="2018-10-20T03:39:23&#43;13:00"/>
+
+<meta property="article:modified_time" content="2018-10-20T03:39:23&#43;13:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Scripting Intro">
+<meta itemprop="description" content="yt uses the text/template package from Go&rsquo;s standard library.
+NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml
+For querying yaml, you won&rsquo;t really need to understand Go templates in depth, but once you&rsquo;re generating yaml, then it pays to understand the dialect&hellip;">
+
+
+<meta itemprop="datePublished" content="2018-10-20T03:39:23&#43;13:00" />
+<meta itemprop="dateModified" content="2018-10-20T03:39:23&#43;13:00" />
+<meta itemprop="wordCount" content="1163">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Scripting Intro"/>
+<meta name="twitter:description" content="yt uses the text/template package from Go&rsquo;s standard library.
+NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml
+For querying yaml, you won&rsquo;t really need to understand Go templates in depth, but once you&rsquo;re generating yaml, then it pays to understand the dialect&hellip;"/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-navy">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://www.laher.net.nz/yt/" class="f3 fw2 hover-white no-underline white-90 dib">
+      yt - a tool for yaml
+    </a>
+    <div class="flex-l items-center">
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/yt/posts/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/yt/posts/getting-started/" title="Getting Started page">
+              Getting Started
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/yt/posts/use-cases/" title="Use Cases page">
+              Use Cases
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+
+
+
+
+  <a href="https://github.com/laher/yt" class="link-transition github link dib z-999 pt3 pt0-l mr2" title="Github link">
+    <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+  </a>
+
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  <article class="flex-l flex-wrap justify-between mw8 center ph3 ph0-l">
+
+    <header class="mt4 w-100">
+      <p class="f6 b helvetica tracked">
+          
+        POSTS
+      </p>
+      <h1 class="f1 athelas mb1">Scripting Intro</h1>
+      
+      <time class="f6 mv4 dib tracked" datetime="2018-10-20T03:39:23&#43;13:00">October 20, 2018</time>
+    </header>
+
+    <main class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l">
+
+<p><code>yt</code> uses the <a href="https://golang.org/pkg/text/template">text/template package</a> from <a href="https://golang.org">Go</a>&rsquo;s standard library.</p>
+
+<p><em>NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml</em></p>
+
+<p><em>For querying yaml, you won&rsquo;t really need to understand Go templates in depth, but once you&rsquo;re generating yaml, then it pays to understand the dialect&hellip;</em></p>
+
+<p>The following is only a primer on Go Templates, adapted from <a href="https://gohugo.io">Hugo&rsquo;s</a> <a href="https://gohugo.io/templates/introduction/">documentation</a>. For an in-depth look into Go Templates, check the official Go docs.</p>
+
+<p>Go Templates provide an extremely simple scripting language which we use in 2 ways:
+ * Scripting for the view layer
+ * Interpolation for individual variable within a yaml doc</p>
+
+<h2 id="basic-syntax">Basic Syntax</h2>
+
+<p>Go Templates are files with the addition of <a href="#variables">variables</a> and <a href="#functions">functions</a>. Go Template variables and functions are accessible within <code>{{ }}</code>.</p>
+
+<h3 id="access-a-predefined-variable">Access a Predefined Variable</h3>
+
+<p>A <em>predefined variable</em> could be a variable already existing in the
+current scope (like the <code>.Title</code> example in the <a href="#variables">Variables</a> section below) or a custom variable (like the
+<code>$address</code> example in that same section).</p>
+
+<pre><code class="language-go-text-template">{{ .Title }}
+{{ $address }}
+</code></pre>
+
+<p>Parameters for functions are separated using spaces. The general syntax is:</p>
+
+<pre><code>{{ FUNCTION ARG1 ARG2 .. }}
+</code></pre>
+
+<p>The following example calls the <code>add</code> function with inputs of <code>1</code> and <code>2</code>:</p>
+
+<pre><code class="language-go-text-template">{{ add 1 2 }}
+</code></pre>
+
+<h4 id="methods-and-fields-are-accessed-via-dot-notation">Methods and Fields are Accessed via dot Notation</h4>
+
+<p>Accessing the variable <code>bar</code>:</p>
+
+<pre><code class="language-go-text-template">{{ .bar }}
+</code></pre>
+
+<h4 id="parentheses-can-be-used-to-group-items-together">Parentheses Can be Used to Group Items Together</h4>
+
+<pre><code class="language-go-text-template">{{ if or (isset . &quot;alt&quot;) (isset . &quot;caption&quot;) }} Caption {{ end }}
+</code></pre>
+
+<h2 id="variables">Variables</h2>
+
+<p>Each Go Template gets a data object. In <code>yt</code>, this is the <code>main</code> data source - either STDIN or a named file.</p>
+
+<pre><code class="language-go-text-template">{{ .Title }}
+</code></pre>
+
+<p>Values can also be stored in custom variables and referenced later:</p>
+
+<blockquote>
+<p>The custom variables need to be prefixed with <code>$</code>.</p>
+</blockquote>
+
+<pre><code class="language-go-text-template">{{ $address := &quot;123 Main St.&quot; }}
+{{ $address }}
+</code></pre>
+
+<h2 id="functions">Functions</h2>
+
+<p>Go Templates only ship with a few basic functions but also provide a mechanism for applications to extend the original set.</p>
+
+<p>[yt scripting functions][functions] provide additional functionality specific to building websites. Functions are called by using their name followed by the required parameters separated by spaces.</p>
+
+<h3 id="example-1-adding-numbers">Example 1: Adding Numbers</h3>
+
+<pre><code class="language-go-text-template">{{ add 1 2 }}
+&lt;!-- prints 3 --&gt;
+</code></pre>
+
+<h3 id="example-2-comparing-numbers">Example 2: Comparing Numbers</h3>
+
+<pre><code class="language-go-text-template">{{ lt 1 2 }}
+&lt;!-- prints true (i.e., since 1 is less than 2) --&gt;
+</code></pre>
+
+<p>Note that both examples make use of Go Template&rsquo;s [math functions][].</p>
+
+<blockquote>
+<p>There are more boolean operators than those listed in these docs in the <a href="http://golang.org/pkg/text/template/#hdr-Functions">Go Template documentation</a>.</p>
+</blockquote>
+
+<h2 id="includes">Includes</h2>
+
+<p>When including another script, you will need to pass it the data that it would
+need to access.</p>
+
+<blockquote>
+<p>To pass along the current context, please remember to include a trailing <strong>dot</strong>.</p>
+</blockquote>
+
+<h3 id="scripts">Scripts</h3>
+
+<p>The [<code>template</code>][template] function is used to include additional scripts using
+the syntax <code>{{ template &quot;_internal/&lt;TEMPLATE&gt;.&lt;EXTENSION&gt;&quot; . }}</code>.</p>
+
+<p><em>TODO: provide a wrapper called &lsquo;script&rsquo;</em></p>
+
+<p>Example:</p>
+
+<pre><code class="language-go-text-template">{{ template &quot;myreport.tpl&quot; . }}
+</code></pre>
+
+<h2 id="logic">Logic</h2>
+
+<p>Go Templates provide the most basic iteration and conditional logic.</p>
+
+<h3 id="iteration">Iteration</h3>
+
+<p>The Go Templates make heavy use of <code>range</code> to iterate over a <em>map</em>,
+<em>array</em>, or <em>slice</em>. The following are different examples of how to
+use <code>range</code>.</p>
+
+<h4 id="example-1-using-context">Example 1: Using Context (<code>.</code>)</h4>
+
+<pre><code class="language-go-text-template">{{ range $array }}
+    {{ . }} &lt;!-- The . represents an element in $array --&gt;
+{{ end }}
+</code></pre>
+
+<h4 id="example-2-declaring-a-variable-name-for-an-array-element-s-value">Example 2: Declaring a variable name for an array element&rsquo;s value</h4>
+
+<pre><code class="language-go-text-template">{{ range $elem_val := $array }}
+    {{ $elem_val }}
+{{ end }}
+</code></pre>
+
+<h4 id="example-3-declaring-variable-names-for-an-array-element-s-index-and-value">Example 3: Declaring variable names for an array element&rsquo;s index <em>and</em> value</h4>
+
+<p>For an array or slice, the first declared variable will map to each
+element&rsquo;s index.</p>
+
+<pre><code class="language-go-text-template">{{ range $elem_index, $elem_val := $array }}
+   {{ $elem_index }} -- {{ $elem_val }}
+{{ end }}
+</code></pre>
+
+<h4 id="example-4-declaring-variable-names-for-a-map-element-s-key-and-value">Example 4: Declaring variable names for a map element&rsquo;s key <em>and</em> value</h4>
+
+<p>For a map, the first declared variable will map to each map element&rsquo;s
+key.</p>
+
+<pre><code class="language-go-text-template">{{ range $elem_key, $elem_val := $map }}
+   {{ $elem_key }} -- {{ $elem_val }}
+{{ end }}
+</code></pre>
+
+<h3 id="conditionals">Conditionals</h3>
+
+<p><code>if</code>, <code>else</code>, <code>with</code>, <code>or</code>, and <code>and</code> provide the framework for handling conditional logic in Go Templates. Like <code>range</code>, each statement is closed with an <code>{{ end }}</code>.</p>
+
+<p>Go Templates treat the following values as <strong>false</strong>:</p>
+
+<ul>
+<li><code>false</code> (boolean)</li>
+<li>0 (integer)</li>
+<li>any zero-length array, slice, map, or string</li>
+</ul>
+
+<h4 id="example-1-with">Example 1: <code>with</code></h4>
+
+<p>It is common to write &ldquo;if something exists, do this&rdquo; kind of
+statements using <code>with</code>.</p>
+
+<blockquote>
+<p><code>with</code> rebinds the context <code>.</code> within its scope (just like in <code>range</code>).</p>
+</blockquote>
+
+<p>It skips the block if the variable is absent, or if it evaluates to
+&ldquo;false&rdquo; as explained above.</p>
+
+<pre><code class="language-go-text-template">{{ with .title }}
+
+    &lt;h4&gt;{{ . }}&lt;/h4&gt;
+{{ end }}
+</code></pre>
+
+<h4 id="example-2-with-else">Example 2: <code>with</code> .. <code>else</code></h4>
+
+<p>Below snippet uses the &ldquo;description&rdquo; front-matter parameter&rsquo;s value if
+set, else uses the default <code>.Summary</code> [variable]:</p>
+
+<pre><code class="language-go-text-template">{{ with . &quot;description&quot; }}
+    {{ . }}
+{{ else }}
+    {{ .Summary }}
+{{ end }}
+</code></pre>
+
+<h4 id="example-3-if">Example 3: <code>if</code></h4>
+
+<p>An alternative (and a more verbose) way of writing <code>with</code> is using
+<code>if</code>. Here, the <code>.</code> does not get rebinded.</p>
+
+<p>Below example is &ldquo;Example 1&rdquo; rewritten using <code>if</code>:</p>
+
+<pre><code class="language-go-text-template">{{ if isset . &quot;title&quot; }}
+    &lt;h4&gt;{{ index . &quot;title&quot; }}&lt;/h4&gt;
+{{ end }}
+</code></pre>
+
+<h4 id="example-4-if-else">Example 4: <code>if</code> .. <code>else</code></h4>
+
+<p>Below example is &ldquo;Example 2&rdquo; rewritten using <code>if</code> .. <code>else</code>, and using
+[<code>isset</code> function][isset] + <code>.</code> variable instead:</p>
+
+<pre><code class="language-go-text-template">{{ if (isset . &quot;description&quot;) }}
+    {{ index . &quot;description&quot; }}
+{{ else }}
+    {{ .Summary }}
+{{ end }}
+</code></pre>
+
+<h4 id="example-5-if-else-if-else">Example 5: <code>if</code> .. <code>else if</code> .. <code>else</code></h4>
+
+<p>Unlike <code>with</code>, <code>if</code> can contain <code>else if</code> clauses too.</p>
+
+<pre><code class="language-go-text-template">{{ if (isset . &quot;description&quot;) }}
+    {{ index . &quot;description&quot; }}
+{{ else if (isset . &quot;summary&quot;) }}
+    {{ index . &quot;summary&quot; }}
+{{ else }}
+    {{ .Summary }}
+{{ end }}
+</code></pre>
+
+<h4 id="example-6-and-or">Example 6: <code>and</code> &amp; <code>or</code></h4>
+
+<pre><code class="language-go-text-template">{{ if (and (or (isset . &quot;title&quot;) (isset . &quot;caption&quot;)) (isset . &quot;attr&quot;)) }}
+</code></pre>
+
+<h2 id="pipes">Pipes</h2>
+
+<p>One of the most powerful components of Go Templates is the ability to stack actions one after another. This is done by using pipes. Borrowed from Unix pipes, the concept is simple: each pipeline&rsquo;s output becomes the input of the following pipe.</p>
+
+<p>Because of the very simple syntax of Go Templates, the pipe is essential to being able to chain together function calls. One limitation of the pipes is that they can only work with a single value and that value becomes the last parameter of the next pipeline.</p>
+
+<p>A few simple examples should help convey how to use the pipe.</p>
+
+<h3 id="example-1-shuffle">Example 1: <code>shuffle</code></h3>
+
+<p>The following two examples are functionally the same:</p>
+
+<pre><code class="language-go-text-template">{{ shuffle (seq 1 5) }}
+</code></pre>
+
+<pre><code class="language-go-text-template">{{ (seq 1 5) | shuffle }}
+</code></pre>
+
+<h3 id="example-2-index">Example 2: <code>index</code></h3>
+
+<p>The following accesses a yaml key called &ldquo;title&rdquo;. This example also uses the [<code>index</code> function][index], which is built into Go Templates:</p>
+
+<pre><code class="language-go-text-template">{{ index . &quot;title&quot; }}
+</code></pre>
+
+<h3 id="example-3-or-with-isset">Example 3: <code>or</code> with <code>isset</code></h3>
+
+<pre><code class="language-go-text-template">{{ if or (or (isset . &quot;title&quot;) (isset . &quot;caption&quot;)) (isset . &quot;attr&quot;) }}
+Stuff Here
+{{ end }}
+</code></pre>
+
+<p>Could be rewritten as</p>
+
+<pre><code class="language-go-text-template">{{ if isset . &quot;caption&quot; | or isset . &quot;title&quot; | or isset . &quot;attr&quot; }}
+Stuff Here
+{{ end }}
+</code></pre>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6">
+        
+      </div>
+    </main>
+
+    <aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">What's in this Posts</p>
+      <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#basic-syntax">Basic Syntax</a>
+<ul>
+<li><a href="#access-a-predefined-variable">Access a Predefined Variable</a>
+<ul>
+<li><a href="#methods-and-fields-are-accessed-via-dot-notation">Methods and Fields are Accessed via dot Notation</a></li>
+<li><a href="#parentheses-can-be-used-to-group-items-together">Parentheses Can be Used to Group Items Together</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#variables">Variables</a></li>
+<li><a href="#functions">Functions</a>
+<ul>
+<li><a href="#example-1-adding-numbers">Example 1: Adding Numbers</a></li>
+<li><a href="#example-2-comparing-numbers">Example 2: Comparing Numbers</a></li>
+</ul></li>
+<li><a href="#includes">Includes</a>
+<ul>
+<li><a href="#scripts">Scripts</a></li>
+</ul></li>
+<li><a href="#logic">Logic</a>
+<ul>
+<li><a href="#iteration">Iteration</a>
+<ul>
+<li><a href="#example-1-using-context">Example 1: Using Context (<code>.</code>)</a></li>
+<li><a href="#example-2-declaring-a-variable-name-for-an-array-element-s-value">Example 2: Declaring a variable name for an array element&rsquo;s value</a></li>
+<li><a href="#example-3-declaring-variable-names-for-an-array-element-s-index-and-value">Example 3: Declaring variable names for an array element&rsquo;s index <em>and</em> value</a></li>
+<li><a href="#example-4-declaring-variable-names-for-a-map-element-s-key-and-value">Example 4: Declaring variable names for a map element&rsquo;s key <em>and</em> value</a></li>
+</ul></li>
+<li><a href="#conditionals">Conditionals</a>
+<ul>
+<li><a href="#example-1-with">Example 1: <code>with</code></a></li>
+<li><a href="#example-2-with-else">Example 2: <code>with</code> .. <code>else</code></a></li>
+<li><a href="#example-3-if">Example 3: <code>if</code></a></li>
+<li><a href="#example-4-if-else">Example 4: <code>if</code> .. <code>else</code></a></li>
+<li><a href="#example-5-if-else-if-else">Example 5: <code>if</code> .. <code>else if</code> .. <code>else</code></a></li>
+<li><a href="#example-6-and-or">Example 6: <code>and</code> &amp; <code>or</code></a></li>
+</ul></li>
+</ul></li>
+<li><a href="#pipes">Pipes</a>
+<ul>
+<li><a href="#example-1-shuffle">Example 1: <code>shuffle</code></a></li>
+<li><a href="#example-2-index">Example 2: <code>index</code></a></li>
+<li><a href="#example-3-or-with-isset">Example 3: <code>or</code> with <code>isset</code></a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-near-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://www.laher.net.nz/yt/" >
+    &copy; 2018 yt - a tool for yaml
+  </a>
+    <div>
+
+
+
+
+
+
+
+  <a href="https://github.com/laher/yt" class="link-transition github link dib z-999 pt3 pt0-l mr2" title="Github link">
+    <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+  </a>
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/yt/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>

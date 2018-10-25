@@ -170,15 +170,14 @@ Try running yt against the testdata/k8s.yaml file provided in this repository (i
   <div class="bg-white mb3 pa4 gray overflow-hidden">
     <span class="f6 db">Posts</span>
     <h1 class="f3 near-black">
-      <a href="/yt/posts/templating/" class="link black dim">
-        Templating Intro
+      <a href="/yt/posts/scripting/" class="link black dim">
+        Scripting Intro
       </a>
     </h1>
     <div class="nested-links f5 lh-copy nested-copy-line-height">
       yt uses the text/template package from Go&rsquo;s standard library.
+NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml
 For querying yaml, you won&rsquo;t really need to understand Go templates in depth, but once you&rsquo;re generating yaml, then it pays to understand the dialect&hellip;
-The following is only a primer on Go Templates, adapted from Hugo&rsquo;s documentation. For an in-depth look into Go Templates, check the official Go docs.
-Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.
     </div>
   </div>
 </div>
