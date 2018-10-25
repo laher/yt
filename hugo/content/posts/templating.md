@@ -1,16 +1,20 @@
 ---
-title: "Templating Intro"
+title: "Scripting Intro"
 date: 2018-10-20T03:39:23+13:00
 toc: true
 ---
 
 `yt` uses the [text/template package](https://golang.org/pkg/text/template) from [Go](https://golang.org)'s standard library.
 
+_NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml_
+
 _For querying yaml, you won't really need to understand Go templates in depth, but once you're generating yaml, then it pays to understand the dialect..._
 
 The following is only a primer on Go Templates, adapted from [Hugo's](https://gohugo.io) [documentation](https://gohugo.io/templates/introduction/). For an in-depth look into Go Templates, check the official Go docs.
 
-Go Templates provide an extremely simple template language that adheres to the belief that only the most basic of logic belongs in the template or view layer.
+Go Templates provide an extremely simple scripting language which we use in 2 ways:
+ * Scripting for the view layer
+ * Interpolation for individual variable within a yaml doc
 
 
 ## Basic Syntax
@@ -77,7 +81,7 @@ Values can also be stored in custom variables and referenced later:
 
 Go Templates only ship with a few basic functions but also provide a mechanism for applications to extend the original set.
 
-[yt template functions][functions] provide additional functionality specific to building websites. Functions are called by using their name followed by the required parameters separated by spaces.
+[yt scripting functions][functions] provide additional functionality specific to building websites. Functions are called by using their name followed by the required parameters separated by spaces.
 
 ### Example 1: Adding Numbers
 
@@ -98,16 +102,18 @@ Note that both examples make use of Go Template's [math functions][].
 
 ## Includes
 
-When including another template, you will need to pass it the data that it would
+When including another script, you will need to pass it the data that it would
 need to access.
 
 > To pass along the current context, please remember to include a trailing **dot**.
 
 
-### Templates
+### Scripts
 
-The [`template`][template] function is used to include additional templates using
+The [`template`][template] function is used to include additional scripts using
 the syntax `{{ template "_internal/<TEMPLATE>.<EXTENSION>" . }}`.
+
+_TODO: provide a wrapper called 'script'_
 
 Example:
 

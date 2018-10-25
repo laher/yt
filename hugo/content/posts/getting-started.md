@@ -31,7 +31,7 @@ This is effectively the same as setting the main query to `'{{.|yaml}}'`
 
 ## Query syntax
 
-See our [Introduction to Templating](/yt/posts/templating/)
+See our [Introduction to yt scripting](/yt/posts/scripting/)
 
 ### Queries by example
 
