@@ -2,6 +2,7 @@
 title: "Concourse Pipeline"
 date: 2018-10-20T19:46:25+13:00
 draft: true
+toc: true
 ---
 
 [Concourse CI](https://concourse-ci.org/) pipelines are typically described in YAML. It seems to be a common characteristic for CI tools at the moment. _For other CI platforms using yaml configurations, see Circle CI, Travis, droid.io, Gitlab CI, …_
@@ -50,3 +51,9 @@ jobs: {}
 ## Breaking the files down
 
 …
+
+## The Example
+
+```
+yt -d testdata/skeleton.yaml -d 'testdata/*' -t testdata/pipeline.yt
+```
