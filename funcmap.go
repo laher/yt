@@ -21,7 +21,9 @@ func funcMap() template.FuncMap {
 		"go":          toGo,
 		"del":         del,
 		"set":         set,
+		"map":         newMap,
 		"merge":       merge,
+		"append":      appendToSlice,
 		"interpolate": interpolate,
 		"cr":          func() string { return "\n" },
 		"newdoc":      func() string { return "---\n" },
@@ -98,11 +100,21 @@ func set(x map[interface{}]interface{}, k string, y interface{}) string {
 	return "" // empty-string avoids output
 }
 
+// TODO: accept varargs of k v k v k v ...
+func newMap() map[interface{}]interface{} {
+	return map[interface{}]interface{}{}
+}
+
 func merge(x, y map[interface{}]interface{}) string {
 	for k, v := range y {
 		x[k] = v
 	}
 	return "" // empty-string avoids output
+}
+
+func appendToSlice(x []interface{}, y interface{}) []interface{} {
+	x = append(x, y)
+	return x
 }
 
 func interpolate(input, data map[interface{}]interface{}) string {

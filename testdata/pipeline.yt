@@ -1,0 +1,16 @@
+{{- $service := (ds "testdata/pipeline-service.yaml").service -}}
+{{- set . "resource_types" (ds "testdata/pipeline-resources.yaml").resource_types -}}
+{{- set . "resources" (ds "testdata/pipeline-resources.yaml").resources -}}
+{{- set . "resources" (ds "testdata/pipeline-resources.yaml").resources -}}
+{{- interpolate . $service }}
+{{- $jobs := (ds "testdata/pipeline-jobs-main.yaml").jobs -}}
+{{- range $i, $env := (ds "testdata/environments.yaml").environments -}}
+  {{- $data := map }}
+  {{- set $data "env" $env }}
+  {{- set $data "service" $service }}
+  {{- $job := (ds "testdata/pipeline-jobs-deploy.yaml") -}}
+  {{- interpolate $job $data -}}
+  {{- $jobs = append $jobs $job -}}
+{{- end -}}
+{{ set . "jobs" $jobs }}
+{{- .jobs|yaml}}

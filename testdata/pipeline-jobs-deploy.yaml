@@ -1,5 +1,5 @@
 jobs:
-  - name: deploy-dev
+  - name: deploy-{{ .env.name }}
     serial: true
     plan:
       - aggregate:
@@ -14,13 +14,13 @@ jobs:
           template: gitrepo
           version: version
         params:
-          KUBERNETES_NAME: laher-dev
+          KUBERNETES_NAME: laher-{{ .env.name }}
           KUBERNETES_SERVER: ((k8s-laher-dev-server))
           KUBERNETES_VERSION: ((k8s-laher-dev-version))
           KUBERNETES_CERTIFICATE_AUTHORITY: ((k8s-laher-dev-certificate-authority))
           KUBERNETES_CLIENT_CERTIFICATE: ((k8s-client-certificate))
           KUBERNETES_CLIENT_KEY: ((k8s-client-key))
-          TEMPLATE: src/{{ .name }}/kube.deploy.dev.{{ getenv "KUBERNETES_NAMESPACE" }}.yaml
+          TEMPLATE: src/{{ .service.name }}/kube.deploy.{{ .env.name }}.yaml
         on_success:
           put: slack
           params:
@@ -52,8 +52,8 @@ jobs:
           repo: gitrepo
         privileged: true
         params:
-          TEST_DIR: ./src/{{ .name }}
-          DC_RUN_ARGS: -f docker-compose.dev.{{getenv "KUBERNETES_NAMESPACE" "myns"}}.yaml run -e JWT_KEY=((mymonorepo-jwt-key-dev)) --rm test
+          TEST_DIR: ./src/{{ .service.name }}
+          DC_RUN_ARGS: -f docker-compose.{{ .env.name }}.yaml run -e JWT_KEY=((mymonorepo-jwt-key-dev)) --rm test
         on_failure:
           put: slack
           params:

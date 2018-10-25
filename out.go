@@ -35,7 +35,7 @@ func spout(output io.Writer, dataSources map[string]source, templateSources map[
 				}
 				kbuf += "'" + k + "'"
 			}
-			log.Fatalf("Data source not found. Data sources: [%s]", kbuf)
+			log.Fatalf("Data source [%s] not found. Data sources: [%s]", k, kbuf)
 
 		}
 		var (
