@@ -34,9 +34,9 @@ menu:
 
 ## Goals
 
-  * Query yaml documents
+* Query yaml documents
   * Support multi-document files (with `---` separator lines)
-  * Manipulate yaml documents
+* Manipulate yaml documents
   * Generate yaml
   * Merge and combine yaml docs
   * Keep yaml separate from looping / conditionals
