@@ -7,16 +7,36 @@ menu:
     other: {}
 ---
 
-`yt` is a [YAML](http://www.yaml.org/) processor in the spirit of [`jq`](https://stedolan.github.io/jq/) and [sed](https://en.wikipedia.org/wiki/Sed).
+`yt` is a [YAML](http://www.yaml.org/) processor in the spirit of [`jq`](https://stedolan.github.io/jq/) and [sed](https://en.wikipedia.org/wiki/Sed).  It can take in many yml files, process them using gomplate language, and then create a new .yml (or .json) file.
+
+```
+    +------+                                      
+    |      |                                      
+    | .yml |\                                     
+    |      | -\                                   
+    +------+   -\                                 
+                 -\                               
+    +------+       -\+-----------+        +------+
+    |      |         -           |        |      |
+    | .yml | --------|    yt     |--------| .yml |
+    |      |        -|           |        |      |
+    +------+      -/ +-----------+        +------+
+                 /                                
+    +------+   -/                                 
+    |      | -/                                   
+    | .yml |/                                     
+    |      |                                      
+    +------+                                      
+```
 
  * `yt` can work with multi-document YAML files.
- * `yt` is VERY experimental - please use with care.
+ * `yt` is experimental - please use with care.
 
 ## Goals
 
- * Query yaml documents
+* Query yaml documents
   * Support multi-document files (with `---` separator lines)
- * Manipulate yaml documents
+* Manipulate yaml documents
   * Generate yaml
   * Merge and combine yaml docs
   * Keep yaml separate from looping / conditionals
@@ -27,11 +47,11 @@ Yaml seems to be everywhere at the moment, particularly in Ops tooling - see Kub
 
 I began writing this tool in 2017, initially to support multi-document files for Kubernetes. I came back to it again to try to generate and manipulate yaml docs for Concourse CI templates.
 
-I wanted a tool to parse and generate yaml. yt helps in some interesting ways. 
+I wanted a tool to parse and generate yaml. `yt` does this and also helps in some interesting ways.
 
 ## Acknowledgements
 
-All of the hard stuff was done in [go-yaml](https://github.com/go-yaml/yaml) and in go itself. Thanks all. 
+All of the hard stuff was done in [go-yaml](https://github.com/go-yaml/yaml) and in go itself. Thanks all.
 
 yt's name is deliberately similar to yq and jq. The y is for yaml and the t might be for 'template', maybe for 'tool', or most likely for 'tarantosaurus'.
 

@@ -6,16 +6,16 @@ toc: true
 
 `yt` uses the [text/template package](https://golang.org/pkg/text/template) from [Go](https://golang.org)'s standard library.
 
-_NOTE: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml_
+___NOTE__: although text/template is a templating language, and yt allows you to use it as such, the intention is more to use it as a scripting language. This allows your yaml to remain as valid yaml_
 
 _For querying yaml, you won't really need to understand Go templates in depth, but once you're generating yaml, then it pays to understand the dialect..._
 
 The following is only a primer on Go Templates, adapted from [Hugo's](https://gohugo.io) [documentation](https://gohugo.io/templates/introduction/). For an in-depth look into Go Templates, check the official Go docs.
 
 Go Templates provide an extremely simple scripting language which we use in 2 ways:
+
  * Scripting for the view layer
  * Interpolation for individual variable within a yaml doc
-
 
 ## Basic Syntax
 
@@ -27,7 +27,6 @@ A _predefined variable_ could be a variable already existing in the
 current scope (like the `.Title` example in the [Variables]({{< relref
 "#variables" >}}) section below) or a custom variable (like the
 `$address` example in that same section).
-
 
 ```go-text-template
 {{ .Title }}
@@ -46,7 +45,9 @@ The following example calls the `add` function with inputs of `1` and `2`:
 {{ add 1 2 }}
 ```
 
-#### Methods and Fields are Accessed via dot Notation
+### Methods and Fields 
+
+Methods and fields are Accessed via dot Notation
 
 Accessing the variable `bar`:
 
@@ -54,7 +55,9 @@ Accessing the variable `bar`:
 {{ .bar }}
 ```
 
-#### Parentheses Can be Used to Group Items Together
+### Parentheses 
+
+Parentheses can be used to group items together for example:
 
 ```go-text-template
 {{ if or (isset . "alt") (isset . "caption") }} Caption {{ end }}
@@ -68,9 +71,7 @@ Each Go Template gets a data object. In `yt`, this is the `main` data source - e
 {{ .Title }}
 ```
 
-Values can also be stored in custom variables and referenced later:
-
-> The custom variables need to be prefixed with `$`.
+Values can also be stored in custom variables and referenced later. The custom variables need to be prefixed with `$`.  For example:
 
 ```go-text-template
 {{ $address := "123 Main St." }}
@@ -98,15 +99,13 @@ Go Templates only ship with a few basic functions but also provide a mechanism f
 ```
 Note that both examples make use of Go Template's [math functions][].
 
-> There are more boolean operators than those listed in these docs in the [Go Template documentation](http://golang.org/pkg/text/template/#hdr-Functions).
+> __NOTE__: there are more boolean operators than those listed in these docs in the [Go Template documentation](http://golang.org/pkg/text/template/#hdr-Functions).
 
 ## Includes
 
-When including another script, you will need to pass it the data that it would
-need to access.
+When including another script, you will need to pass it the data that it would need to access.
 
-> To pass along the current context, please remember to include a trailing **dot**.
-
+> __NOTE__: To pass along the current context, please remember to include a trailing **dot**.
 
 ### Scripts
 
@@ -184,7 +183,7 @@ Go Templates treat the following values as **false**:
 It is common to write "if something exists, do this" kind of
 statements using `with`.
 
-> `with` rebinds the context `.` within its scope (just like in `range`).
+> __NOTE:__ `with` rebinds the context `.` within its scope (just like in `range`).
 
 It skips the block if the variable is absent, or if it evaluates to
 "false" as explained above.
@@ -200,7 +199,6 @@ It skips the block if the variable is absent, or if it evaluates to
 
 Below snippet uses the "description" front-matter parameter's value if
 set, else uses the default `.Summary` [variable]:
-
 
 ```go-text-template
 {{ with . "description" }}
@@ -271,7 +269,6 @@ The following two examples are functionally the same:
 ```go-text-template
 {{ shuffle (seq 1 5) }}
 ```
-
 
 ```go-text-template
 {{ (seq 1 5) | shuffle }}
